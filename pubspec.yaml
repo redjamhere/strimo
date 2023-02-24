@@ -1,0 +1,207 @@
+name: joyvee
+description: Social stream app.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  #GIT
+  strimocamera:
+    git:
+      url: https://github.com/redjamhere/strimo-camera
+
+  #LOCAL
+  animated_bottom_navigation_bar:
+    path: packages/bottom-navigation-bar
+  widget_to_marker:
+    path: packages/widget_to_marker
+  haishin_kit:
+    path: packages/HaishinKit.dart
+
+  #UI
+  flutter_svg: ^1.1.0
+  cupertino_icons: ^1.0.2
+  fluster: ^1.2.0
+  custom_map_markers: ^0.0.1
+  flutter_otp_text_field: ^1.0.0
+  auto_size_text: ^3.0.0
+  flutter_staggered_grid_view: ^0.6.2
+  another_flushbar: ^1.10.29
+  loading_animation_widget: ^1.2.0+2
+  currency_text_input_formatter: ^2.1.7
+  autocomplete_textfield: ^2.0.1
+  we_slide: ^2.3.0
+  emoji_picker_flutter: ^1.5.1
+  animated_loading_border: ^0.0.1
+  liquid_pull_to_refresh: ^3.0.1
+  custom_marker: ^1.0.0
+  google_maps_cluster_manager: ^3.0.0+1
+
+  #data
+  image_picker: ^0.8.5+3
+  http: ^0.13.4
+  cached_network_image: ^3.2.1
+  flutter_cache_manager: ^3.3.0
+  intl: ^0.17.0
+  video_player: ^2.4.5
+  crypto: ^3.0.2
+  shared_preferences: ^2.0.15
+  flutter_phoenix: ^1.0.0
+  hashtagable: ^2.1.0
+  geolocator: ^9.0.2
+  social_share: ^2.2.1
+  flutter_bloc: ^8.1.1
+  equatable: ^2.0.5
+  formz: ^0.4.1
+  socket_io_client: ^2.0.0
+  url_launcher: ^6.1.7
+  audio_session: any
+  permission_handler: any
+  camera: ^0.10.3
+  collection:
+
+  #GOOGLE
+  google_maps_flutter: ^2.1.7
+  firebase_core: ^2.4.1
+  google_sign_in: ^5.4.0
+  firebase_auth: ^4.2.5
+  firebase_messaging: ^14.2.1
+  google_place: ^0.4.7
+  google_geocoding: ^0.2.0
+  geocoding: ^2.0.5
+
+  #FACEBOOK
+  flutter_facebook_auth: ^4.4.0+1
+
+  #APPLE
+  sign_in_with_apple: ^4.1.0
+  device_info_plus: 3.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^2.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  assets:
+    #SVG
+    - assets/svg/google.svg
+    - assets/svg/facebook.svg
+    - assets/svg/instagram.svg
+    - assets/svg/apple.svg
+    - assets/svg/empty_avatar.svg
+    - assets/svg/logo.svg
+    - assets/svg/rocket.svg
+    - assets/svg/instagram_profile.svg
+    - assets/svg/tiktok_profile.svg
+    - assets/svg/youtube_profile.svg
+    - assets/svg/heart_profile.svg
+    - assets/svg/new_stream_icon.svg
+    - assets/svg/request_stream_icon.svg
+    - assets/svg/live_stream_icon.svg
+    - assets/svg/schedule_stream_icon.svg
+    - assets/svg/instagram_filled.svg
+    - assets/svg/tiktok_filled.svg
+    - assets/svg/youtube_filled.svg
+    #PNG
+    - assets/png/empty_avatar.png
+    - assets/png/place_picker_icon.png
+    - assets/png/welcome_appbar.png
+    #JPG
+    - assets/jpg/appicon.jpg
+    - assets/jpg/appicon-bw.jpg
+    #TEMP
+    - assets/temp/video.mp4
+
+  fonts:
+    - family: JoyveeIcons
+      fonts:
+        - asset: assets/fonts/icons/JoyveeIcons.ttf
+    - family: JoyveeIconsPack2
+      fonts:
+        - asset: assets/fonts/icons/JoyveeIcons_pack_2.ttf
+    - family: SFProText
+      fonts:
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Black.otf
+          style: normal
+          weight: 900
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-BlackItalic.otf
+          style: italic
+          weight: 900
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Bold.otf
+          style: normal
+          weight: 700
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-BoldItalic.otf
+          style: italic
+          weight: 700
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Heavy.otf
+          style: normal
+          weight: 800
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-HeavyItalic.otf
+          style: italic
+          weight: 800
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Light.otf
+          style: normal
+          weight: 300
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-LightItalic.otf
+          style: italic
+          weight: 300
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Medium.otf
+          style: normal
+          weight: 500
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-MediumItalic.otf
+          style: italic
+          weight: 500
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Regular.otf
+          style: normal
+          weight: 400
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-RegularItalic.otf
+          style: italic
+          weight: 400
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Semibold.otf
+          style: normal
+          weight: 600
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-SemiboldItalic.otf
+          style: italic
+          weight: 600
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Thin.otf
+          style: normal
+          weight: 100
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-ThinItalic.otf
+          style: italic
+          weight: 100
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-Ultralight.otf
+          style: normal
+          weight: 200
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Display-UltralightItalic.otf
+          style: italic
+          weight: 200
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Text-Bold.otf
+          style: normal
+          weight: 700
+        - asset: assets/fonts/Sf-Pro/SF-Pro-Text-BoldItalic.otf
+          style: italic
+          weight: 700

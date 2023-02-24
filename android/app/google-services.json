@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "844536392674",
+    "project_id": "joyvee-ad822",
+    "storage_bucket": "joyvee-ad822.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844536392674:android:b1e3991d1524c97ddbe7bb",
+        "android_client_info": {
+          "package_name": "com.joyvee.streamapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844536392674-lp2n65hb324h6n5msi5tna5v8kh8i4ka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAI7brtk39r4yLPPj21Sy5tAc8Md-8Jts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844536392674-lp2n65hb324h6n5msi5tna5v8kh8i4ka.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "844536392674-dajfikgg47pg1pq46q50bvclhgdb20si.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.joyvee.joyvee",
+                "app_store_id": "1618410262"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
