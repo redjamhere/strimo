@@ -4,7 +4,6 @@ import 'package:joyvee/src/bloc/bloc.dart';
 import 'package:joyvee/src/repository/map_repository.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import './utils/utils.dart';
 import './views/views.dart';
 
@@ -17,7 +16,10 @@ class JoyveeApp extends StatelessWidget {
       required this.streamRepository,
       required this.mapRepository,
       required this.streamChatRepository,
-      required this.iosStreamRepository});
+      required this.iosStreamRepository,
+      required this.messengerRepository,
+      required this.searchRepository
+  });
 
   final AuthorizationRepository authorizationRepository;
   final UserRepository userRepository;
@@ -26,7 +28,9 @@ class JoyveeApp extends StatelessWidget {
   final MapRepository mapRepository;
   final StreamChatRepository streamChatRepository;
   final IosStreamRepository iosStreamRepository;
-  
+  final MessengerRepository messengerRepository;
+  final SearchRepository searchRepository;
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -37,7 +41,9 @@ class JoyveeApp extends StatelessWidget {
           RepositoryProvider.value(value: mapRepository),
           RepositoryProvider.value(value: streamRepository),
           RepositoryProvider.value(value: streamChatRepository),
-          RepositoryProvider.value(value: iosStreamRepository)
+          RepositoryProvider.value(value: iosStreamRepository),
+          RepositoryProvider.value(value: messengerRepository),
+          RepositoryProvider.value(value: searchRepository)
         ],
         child: BlocProvider(
           create: (ctx) => AuthorizationBloc(
@@ -87,9 +93,14 @@ class _JoyveeAppViewState extends State<JoyveeAppView> {
                               BlocProvider(
                                 lazy: false,
                                 create: (_) => LivemapBloc(
-                                  userRepository: RepositoryProvider.of<UserRepository>(context),
-                                  mapRepository: RepositoryProvider.of<MapRepository>(context)
+                                  userRepository: context.read<UserRepository>(),
+                                  mapRepository: context.read<MapRepository>()
                                 )..add(LivemapFetchMarkersRequested())),
+                              BlocProvider(
+                                create: (_) => MessengerBloc(
+                                  userRepository: context.read<UserRepository>(), 
+                                  messengerRepository: context.read<MessengerRepository>()),
+                              )
                             ],
                             child: Wrapper(),
                           )),

@@ -36,6 +36,7 @@ class UserService {
 
   String getUserLocalLanguage()  {
     int index = Platform.localeName.indexOf('_');
+    return 'ru';
     return Platform.localeName.substring(0, index);
   }
 
@@ -46,7 +47,7 @@ class UserService {
       AndroidDeviceInfo deviceInfo = await DeviceInfoPlugin().androidInfo;
       deviceId = deviceInfo.androidId!;
       deviceName = "ANDROID";
-    } else if (Platform.isIOS) {
+    } else if (Platform.isIOS || Platform.isMacOS) {
       IosDeviceInfo deviceInfo = await DeviceInfoPlugin().iosInfo;
       deviceId = deviceInfo.identifierForVendor!;
       deviceName = "IOS";

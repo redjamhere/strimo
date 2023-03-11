@@ -5,7 +5,7 @@ import 'package:joyvee/src/repository/respository.dart';
 import './src/utils/utils.dart';
 
 import './src/app.dart';
- 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -19,5 +19,8 @@ Future<void> main() async {
     mapRepository: MapRepository(),
     streamChatRepository: StreamChatRepository(),
     iosStreamRepository: IosStreamRepository(),
+    messengerRepository: MessengerRepository(),
+    searchRepository: SearchRepository(),
   )));
+  // print(kMessages[DateTime(2023, 3, 1, 14, 18)]);
 }

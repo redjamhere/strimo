@@ -25,6 +25,9 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        previous.profileLoadingStatus != current.profileLoadingStatus
+        || previous.profileUpdatingStatus != current.profileUpdatingStatus,
       builder: (context, state) {
         if (state.profileLoadingStatus.isSubmissionInProgress || state.profileLoadingStatus.isPure) {
           return const FullScreenProgressIndicator();
@@ -111,7 +114,7 @@ class ProfileView extends StatelessWidget {
                           children: [
                             Text(
                               state.profile.rating!.toString(),
-                              style: TextStyle(fontSize: 20, color: Colors.black),
+                              style: const TextStyle(fontSize: 20, color: Colors.black),
                             ),
                             Text(
                               "рейтинг",
@@ -212,34 +215,7 @@ class ProfileView extends StatelessWidget {
                                       ],
                                     ),
                                     SizedBox(height: SizeConfig.blockSizeVertical!),
-                                    JoyveeOutlinedButton(
-                                      func: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (ctx) => BlocProvider.value(
-                                            value: context.read<ProfileBloc>(),
-                                            child: ProfileEditView(),
-                                          )
-                                        )
-                                      ),
-                                      style: Theme.of(context)
-                                          .outlinedButtonTheme
-                                          .style!
-                                          .copyWith(
-                                              padding: MaterialStateProperty.all<
-                                                      EdgeInsetsGeometry>(
-                                                  EdgeInsets.symmetric(
-                                                      vertical: SizeConfig
-                                                              .blockSizeVertical! *
-                                                          1.5)),
-                                              minimumSize:
-                                                  MaterialStateProperty.all<Size>(
-                                                      const Size.fromHeight(0))),
-                                      child: const Text(
-                                        "Редактировать",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ),
+                                    const _ProfileControlsView()
                                   ])),
                         );
                       },
@@ -302,6 +278,91 @@ class ProfileView extends StatelessWidget {
           );
         } else {
           return Center(child: Text(state.errorMessage.toString()),);
+        }
+      },
+    );
+  }
+}
+
+class _ProfileControlsView extends StatelessWidget {
+  const _ProfileControlsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => previous.isMy != current.isMy,
+      builder: (context, state) {
+        if (state.isMy) {
+          return JoyveeOutlinedButton(
+            func: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => BlocProvider.value(
+                  value: context.read<ProfileBloc>(),
+                  child: ProfileEditView(),
+                )
+              )
+            ),
+            style: Theme.of(context)
+                .outlinedButtonTheme
+                .style!
+                .copyWith(
+                    padding: MaterialStateProperty.all<
+                            EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(
+                            vertical: SizeConfig
+                                    .blockSizeVertical! *
+                                1.5)),
+                    minimumSize:
+                        MaterialStateProperty.all<Size>(
+                            const Size.fromHeight(0))),
+            child: const Text(
+              "Редактировать",
+              style: TextStyle(color: Colors.black),
+            ),
+          );
+        } else {
+          return Row(
+            key: const ObjectKey("profile_controls"),
+            children: [
+              Expanded(
+                child: JoyveeOutlinedButton(
+                  func: () => null,
+                  style: Theme.of(context)
+                      .outlinedButtonTheme
+                      .style!
+                      .copyWith(
+                          padding: MaterialStateProperty.all<
+                                  EdgeInsetsGeometry>(
+                              EdgeInsets.symmetric(
+                                  vertical: SizeConfig
+                                          .blockSizeVertical! *
+                                      1.5)),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(
+                                  const Size.fromHeight(0))),
+                  child: const Text(
+                    "Сообщения",
+                    style: TextStyle(color: Colors.black),
+                  ))),
+              SizedBox(width: SizeConfig.blockSizeVertical,),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => null,
+                  style: Theme.of(context)
+                      .elevatedButtonTheme
+                      .style!
+                      .copyWith(
+                        padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                          EdgeInsets.symmetric(vertical:  SizeConfig
+                                          .blockSizeVertical! *
+                                      1.5))
+                      ),
+                  child: const Text(
+                    "Подписаться",
+                  )))
+            ],
+          );
         }
       },
     );

@@ -70,6 +70,24 @@ class JProfile extends Profile {
     isStreaming: data['is_streaming'],
     stream: data['stream'] != null ? JStream.fromJson(data['stream']) : null
   );
+  factory JProfile.fromJsonOnSearch(Map<String, dynamic> data) => JProfile(
+    profileId: data['id'],
+    userId: data['user_id'],
+    firstname: data['firstname'],
+    lastname: data['lastname'],
+    username: data['tagname'],
+    gender: parseStringToSex(data['gender']),
+    avatar: "${ImageAPI.avatarsURL}${data['avatar']}.jpg",
+    about: data['about'],
+    followers: data['followers'],
+    subscribers: data['subcribed'],
+    rating: data['rating'],
+    videos: data['videos'],
+    isOnline: data['is_online'],
+    instagramUrl: data['instagram_url'],
+    tiktokUrl: data['tiktok_url'],
+    youtubeUrl: data['youtube_url'],
+  );
 
   JProfile copyWith({
     String? firstname,

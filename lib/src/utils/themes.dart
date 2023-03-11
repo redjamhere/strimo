@@ -65,9 +65,9 @@ class AppThemes {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           textStyle: MaterialStateProperty.all<TextStyle>(
-              TextStyle(
-                fontSize: 17 * MediaQuery.textScaleFactorOf(context),
-                fontWeight: FontWeight.w600,
+              const TextStyle(
+                // fontSize: 17 * MediaQuery.textScaleFactorOf(context),
+                // fontWeight: FontWeight.w600,
                 color: Colors.white
           )),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(

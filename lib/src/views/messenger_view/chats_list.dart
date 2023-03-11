@@ -1,6 +1,8 @@
 // описание спика сообщений
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:joyvee/src/bloc/bloc.dart';
 import 'package:joyvee/src/models/messenger_models/chat.dart';
 import 'package:joyvee/src/utils/utils.dart';
 import 'package:joyvee/src/views/messenger_view/chat_view.dart';
@@ -123,7 +125,10 @@ class ChatList extends StatelessWidget {
           return Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (ctx) => ChatView())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(
+                value: context.read<MessengerBloc>()..add(MessengerScrollPositionInited()),
+                child: ChatView(),
+              ))),
               child: Row(
                 children: [
                   JoyveeProfileAvatar(avatar: _chats[index].members[0].avatar!, isOnline: _chats[index].members[0].isOnline!),
@@ -146,7 +151,7 @@ class ChatList extends StatelessWidget {
                                   const WidgetSpan(child: Icon(Icons.abc, color: JoyveeColors.jvLightBlueLink,)),
                                   const TextSpan(text: " "),
                                   TextSpan(
-                                      text: JoyveeFunctions.parseDateTimeToString(_chats[index].lastMessage.createTime!),
+                                      text: JoyveeFunctions.parseDateTimeToString(_chats[index].lastMessage.date),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 14)
                                   )
                                 ]

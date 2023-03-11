@@ -4,3 +4,4 @@ export 'map_service.dart';
 export 'stream_service.dart';
 export 'authorization_service.dart';
 export 'profile_service.dart';
+export 'search_service.dart';

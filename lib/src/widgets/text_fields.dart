@@ -30,6 +30,7 @@ abstract class _JoyveeTextField extends StatelessWidget {
   final void Function(String)? onSubmit;
   final int? maxLength;
   final bool showMaxLength;
+  final FocusNode? focudNode;
 
   const _JoyveeTextField({
     this.controller,
@@ -53,7 +54,8 @@ abstract class _JoyveeTextField extends StatelessWidget {
     this.suffixWidget,
     this.onSubmit,
     this.maxLength,
-    this.showMaxLength = false
+    this.showMaxLength = false,
+    this.focudNode
   });
 
   @override
@@ -84,6 +86,8 @@ class JoyveeDefaultTextField extends _JoyveeTextField {
       this.inputFormatters,
       int? maxLength,
       bool showMaxLength = false,
+      Widget? prefixIcon,
+      FocusNode? focusNode
   }) : super(
       style: style,
       controller: controller,
@@ -100,7 +104,10 @@ class JoyveeDefaultTextField extends _JoyveeTextField {
       errorText: errorText,
       suffixWidget: suffixWidget,
       maxLength: maxLength,
-      showMaxLength: showMaxLength
+      showMaxLength: showMaxLength,
+      prefixIcon: prefixIcon,
+      textInputAction: textInputAction,
+      focudNode: focusNode
   );
 
   @override
@@ -110,6 +117,7 @@ class JoyveeDefaultTextField extends _JoyveeTextField {
       style: style,
       onChanged: onChanged,
       controller: controller,
+      focusNode: focudNode,
       maxLines: maxLines,
       inputFormatters: inputFormatters,
       keyboardType: textInputType,
@@ -132,6 +140,7 @@ class JoyveeDefaultTextField extends _JoyveeTextField {
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         suffixIcon: showSuffix ? suffixIcon : null,
+        prefixIcon: prefixIcon,
         suffix: suffixWidget
       ),
     );
@@ -301,7 +310,7 @@ class JoyveeAuthTextField extends _JoyveeTextField {
 class JoyveeSearchTextField extends _JoyveeTextField {
   const JoyveeSearchTextField({
     required TextStyle style,
-    required TextEditingController controller,
+    TextEditingController? controller,
     String? hintText,
     ValueChanged<String>? onChanged,
     bool autofocus = false,

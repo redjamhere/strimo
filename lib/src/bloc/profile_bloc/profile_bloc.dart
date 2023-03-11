@@ -41,6 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(state.copyWith(
         profile: p, 
         lastStreams: ls,
+        isMy: event.isMy,
         profileLoadingStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(

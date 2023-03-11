@@ -1,5 +1,6 @@
 // описание экрана настроек
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:joyvee/src/bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:joyvee/src/utils/utils.dart';

@@ -4,6 +4,7 @@ import 'package:joyvee/src/models/models.dart';
 import 'package:joyvee/src/utils/utils.dart';
 import 'package:joyvee/src/widgets/widgets.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class RecommendationView extends StatelessWidget {
   RecommendationView({Key? key}) : super(key: key);
@@ -57,96 +58,91 @@ class RecommendationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Container(
-      height: SizeConfig.screenHeight,
-      width: SizeConfig.screenWidth,
-      // padding: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical! * 10),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("TOP STREAMS", style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: JoyveeColors.jvGreySecondary,
-                      fontSize: 12 * MediaQuery.of(context).textScaleFactor)),
-                 JoyveeTextButton(
-                   func: () => null,
-                   style: Theme.of(context).textButtonTheme.style!.copyWith(
-                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
-                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                     minimumSize: MaterialStateProperty.all<Size>(const Size(0, 0))
-                   ),
-                   child: const Text('MORE',
-                       style: TextStyle(
-                           color: JoyveeColors.jvLightBlueLink,
-                           fontSize: 12)))
-                ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("TOP STREAMS", style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: JoyveeColors.jvGreySecondary,
+                    fontSize: 12 * MediaQuery.of(context).textScaleFactor)),
+               JoyveeTextButton(
+                 func: () => null,
+                 style: Theme.of(context).textButtonTheme.style!.copyWith(
+                   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                   minimumSize: MaterialStateProperty.all<Size>(const Size(0, 0))
+                 ),
+                 child: const Text('MORE',
+                     style: TextStyle(
+                         color: JoyveeColors.jvLightBlueLink,
+                         fontSize: 12)))
+              ],
+            ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical!),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: SizedBox(
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.blockSizeVertical! * 20,
+              child: ListView.separated(
+                itemCount: _topStreams.length,
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => TopStreamCard(
+                    stream: _topStreams[index],
+                    onTap: () => '') ,
               ),
             ),
-            SizedBox(height: SizeConfig.blockSizeVertical!),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: SizedBox(
-                width: SizeConfig.screenWidth,
-                height: SizeConfig.blockSizeVertical! * 20,
-                child: ListView.separated(
-                  itemCount: _topStreams.length,
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) => TopStreamCard(
-                      stream: _topStreams[index],
-                      onTap: () => '') ,
-                ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("AUTHORS", style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: JoyveeColors.jvGreySecondary,
+                    fontSize: 12 * MediaQuery.of(context).textScaleFactor)),
+                JoyveeTextButton(
+                    func: () => null,
+                    style: Theme.of(context).textButtonTheme.style!.copyWith(
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minimumSize: MaterialStateProperty.all<Size>(const Size(0, 0))
+                    ),
+                    child: const Text('MORE',
+                        style: TextStyle(
+                            color: JoyveeColors.jvLightBlueLink,
+                            fontSize: 12)))
+              ],
+            ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical!),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: SizedBox(
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.blockSizeVertical! * 20,
+              child: ListView.separated(
+                itemCount: _topAuthors.length,
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => TopAuthorCard(
+                    author: _topAuthors[index],
+                    onTap: () => print('sheddddsh')) ,
               ),
             ),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("AUTHORS", style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: JoyveeColors.jvGreySecondary,
-                      fontSize: 12 * MediaQuery.of(context).textScaleFactor)),
-                  JoyveeTextButton(
-                      func: () => null,
-                      style: Theme.of(context).textButtonTheme.style!.copyWith(
-                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: MaterialStateProperty.all<Size>(const Size(0, 0))
-                      ),
-                      child: const Text('MORE',
-                          style: TextStyle(
-                              color: JoyveeColors.jvLightBlueLink,
-                              fontSize: 12)))
-                ],
-              ),
-            ),
-            SizedBox(height: SizeConfig.blockSizeVertical!),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: SizedBox(
-                width: SizeConfig.screenWidth,
-                height: SizeConfig.blockSizeVertical! * 20,
-                child: ListView.separated(
-                  itemCount: _topAuthors.length,
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) => TopAuthorCard(
-                      author: _topAuthors[index],
-                      onTap: () => print('sheddddsh')) ,
-                ),
-              ),
-            ),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-            const Center(
-                child: RVideoPlayer()
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+          const Center(
+              child: RVideoPlayer()
+          ),
+        ],
       ),
     );
   }
@@ -160,19 +156,18 @@ class RVideoPlayer extends StatefulWidget {
 }
 
 class _RVideoPlayerState extends State<RVideoPlayer> {
-  late VideoPlayerController _controller;
+  late final YoutubePlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset("assets/temp/video.mp4")
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
-    _controller.setVolume(0);
-    _controller.setLooping(true);
-    _controller.play();
+    _controller = YoutubePlayerController(
+        initialVideoId: 'M5MDMLFEkNo',
+        flags: const YoutubePlayerFlags(
+            autoPlay: true,
+            mute: true,
+        ),
+    );
   }
 
   @override
@@ -185,16 +180,9 @@ class _RVideoPlayerState extends State<RVideoPlayer> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Material(
-        borderRadius: BorderRadius.circular(16),
-        elevation: 5,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          ),
-        ),
+      child: YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: false,
       ),
     );
   }

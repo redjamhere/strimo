@@ -6,7 +6,12 @@ abstract class ProfileEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ProfileRequestedEvent extends ProfileEvent {}
+class ProfileRequestedEvent extends ProfileEvent {
+  const ProfileRequestedEvent({this.isMy = true});
+  final bool isMy;
+  @override
+  List<Object> get props => [isMy];
+}
 
 class ProfileAvatarChanged extends ProfileEvent {
   const ProfileAvatarChanged(this.avatar);

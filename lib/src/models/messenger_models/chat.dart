@@ -3,6 +3,7 @@
 import 'package:joyvee/src/interfaces/interfaces.dart';
 
 import '../../utils/utils.dart';
+import './message.dart';
 
 class Chat {
   final int id;
@@ -60,44 +61,44 @@ class ChatMember extends Profile {
   List<Object> get props => [];
 }
 
-class Message {
-  final int? id;
-  final int? chatId;
-  final int senderId;
-  final MessageType type;
-  final dynamic content;
-  final int? requesterId;
-  final int? streamId;
-  final DateTime? createTime;
-  
-  const Message({
-    this.id, 
-    this.chatId, 
-    required this.senderId, 
-    required this.type, 
-    required this.content, 
-    this.requesterId, 
-    this.streamId, 
-    this.createTime});
-  
-  factory Message.fromJson(Map<String, dynamic> data) => Message(
-      id: data['id'],
-      chatId: data['chat_id'],
-      senderId: data["sender"], 
-      type: JoyveeFunctions.intToMessageType(data['type_id']),
-      content: data['content'],
-      createTime: DateTime.parse(data['date_create'])
-  );
-
-  Map<String, dynamic> toJson() => {
-    "chat_id": chatId,
-    "sender": senderId,
-    "stream_id": streamId,
-    "type": JoyveeFunctions.messageTypeToString(type),
-    "requester_id": requesterId,
-    "content": content
-  };
-
-  @override
-  String toString() => 'MESSAGE FROM $senderId';
-}
+// class Message {
+//   final int? id;
+//   final int? chatId;
+//   final int senderId;
+//   final MessageType type;
+//   final dynamic content;
+//   final int? requesterId;
+//   final int? streamId;
+//   final DateTime? createTime;
+//
+//   const Message({
+//     this.id,
+//     this.chatId,
+//     required this.senderId,
+//     required this.type,
+//     required this.content,
+//     this.requesterId,
+//     this.streamId,
+//     this.createTime});
+//
+//   factory Message.fromJson(Map<String, dynamic> data) => Message(
+//       id: data['id'],
+//       chatId: data['chat_id'],
+//       senderId: data["sender"],
+//       type: JoyveeFunctions.intToMessageType(data['type_id']),
+//       content: data['content'],
+//       createTime: DateTime.parse(data['date_create'])
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "chat_id": chatId,
+//     "sender": senderId,
+//     "stream_id": streamId,
+//     "type": JoyveeFunctions.messageTypeToString(type),
+//     "requester_id": requesterId,
+//     "content": content
+//   };
+//
+//   @override
+//   String toString() => 'MESSAGE FROM $senderId';
+// }

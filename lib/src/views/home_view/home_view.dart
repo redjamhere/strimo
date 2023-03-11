@@ -1,11 +1,13 @@
 // Описание экрана с картами и трансляциями
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:joyvee/src/cubit/global_search_cubit/global_search_cubit.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:joyvee/src/utils/utils.dart';
 import 'package:joyvee/src/views/home_view/live_map.dart';
 import 'package:joyvee/src/views/home_view/scheduled_list.dart';
+import 'package:joyvee/src/views/home_view/search_view.dart';
 import 'package:joyvee/src/widgets/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 //blocs
 import 'package:joyvee/src/bloc/bloc.dart';
@@ -20,7 +22,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _searchController = TextEditingController();
   bool showSuffixIcon = false;
 
   @override
@@ -51,35 +52,37 @@ class _HomeViewState extends State<HomeView>
                   children: [
                     Expanded(
                       child: JoyveeSearchTextField(
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.black),
-                          controller: _searchController,
-                          hintText: "Enter address",
-                          showSuffix: showSuffixIcon,
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.clear, color: Colors.black),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => showSuffixIcon = false);
-                            },
-                          ),
-                          prefixIcon: const Icon(Icons.search,
-                              color: JoyveeColors.jvGreyHintText),
-                          onChanged: (String s) {
-                            if (_searchController.text.isNotEmpty) {
-                              if (!showSuffixIcon) {
-                                setState(() {
-                                  showSuffixIcon = true;
-                                });
-                              }
-                            } else {
-                              setState(() {
-                                showSuffixIcon = false;
-                              });
-                            }
-                          }),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(color: Colors.black),
+                        hintText: "People, streams, places",
+                        showSuffix: showSuffixIcon,
+                        readOnly: true,
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MultiBlocProvider(
+                                      providers: [
+                                        BlocProvider(
+                                          create: (context) =>
+                                              GlobalSearchCubit(
+                                                  userRepository: context
+                                                      .read<UserRepository>(),
+                                                  searchRepository:
+                                                      context.read<
+                                                          SearchRepository>()),
+                                        ),
+                                        BlocProvider(
+                                          create: (context) => ProfileBloc(
+                                            userRepository: context.read<UserRepository>(), 
+                                            profileRepository: context.read<ProfileRepository>())),
+                                      ],
+                                      child: const SearchView(),
+                                    ))),
+                        prefixIcon: const Icon(Icons.search,
+                            color: JoyveeColors.jvGreyHintText),
+                      ),
                     ),
                     const SizedBox(width: 10),
                     JoyveeAppbarActionButton(

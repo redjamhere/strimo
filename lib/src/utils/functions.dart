@@ -201,4 +201,12 @@ class JoyveeFunctions {
     return CameraController(camera, resolutionPreset, enableAudio: false);
   }
 
+  static String formatDateToMessengerSeparator(DateTime date) {
+    final month = DateFormat.yMMM().format(date).split(" ")[0];
+    final day = date.day;
+    final year = date.year;
+    final hour = date.hour < 10 ? '0${date.hour}' : date.hour;
+    final minute = date.minute < 10 ? '0${date.minute}' : date.minute;
+    return '$day $month., $year, $hour:$minute';
+  }
 }

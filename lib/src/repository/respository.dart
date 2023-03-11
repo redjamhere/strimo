@@ -6,3 +6,5 @@ export 'stream_chat_repository.dart';
 export 'profile_repository.dart';
 export 'map_repository.dart';
 export 'ios_stream_repository.dart';
+export 'messenger_repository.dart';
+export 'search_repository.dart';

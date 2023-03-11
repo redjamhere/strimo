@@ -86,11 +86,11 @@ class JoyveeElevatedButton extends _JoyveeButton {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return ElevatedButton(
-        style: style!.copyWith(
-          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-              EdgeInsets.symmetric(horizontal: 16, vertical: SizeConfig.blockSizeVertical! * 2,)
-          )
-        ),
+        // style: style!.copyWith(
+        //   padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        //       EdgeInsets.symmetric(horizontal: 16, vertical: SizeConfig.blockSizeVertical! * 2,)
+        //   )
+        // ),
         onPressed: (func != null) ? () => func!.call() : null,
         child: child);
   }

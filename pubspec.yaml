@@ -43,7 +43,8 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.1
   custom_marker: ^1.0.0
   google_maps_cluster_manager: ^3.0.0+1
-
+  very_good_infinite_list: ^0.7.0
+  
   #data
   image_picker: ^0.8.5+3
   http: ^0.13.4
@@ -66,7 +67,8 @@ dependencies:
   permission_handler: any
   camera: ^0.10.3
   collection:
-
+  youtube_player_flutter: ^8.1.2
+  
   #GOOGLE
   google_maps_flutter: ^2.1.7
   firebase_core: ^2.4.1
@@ -133,8 +135,6 @@ flutter:
     #JPG
     - assets/jpg/appicon.jpg
     - assets/jpg/appicon-bw.jpg
-    #TEMP
-    - assets/temp/video.mp4
 
   fonts:
     - family: JoyveeIcons

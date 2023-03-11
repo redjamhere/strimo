@@ -56,7 +56,7 @@ class ProfileService {
     }
   }
 
-  Future<JProfile> getProfile(JUser user ) async {
+  Future<JProfile> getProfile(JUser user) async {
     http.Response response = await http.get(Uri.parse('${UserAPI.profileURL}${user.id}'),
       headers: <String, String> {
         'Content-Type': 'application/json; charset=utf-8',

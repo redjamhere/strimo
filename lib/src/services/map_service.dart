@@ -74,7 +74,6 @@ class MapService {
       List<StreamMarker> rp = rStreams.map((e) => StreamMarker.fromJson(e)).toList();
       return MapContent(streams: p, actives: a, rStreams: rp);
     } else {
-
       throw status;
     }
 
