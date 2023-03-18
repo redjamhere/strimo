@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:joyvee/src/utils/constants.dart';
+import 'package:joyvee/src/utils/size_config.dart';
 import 'package:joyvee/src/views/views.dart';
 import 'package:joyvee/src/widgets/widgets.dart';
 
@@ -10,6 +11,7 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.45),
@@ -29,11 +31,15 @@ class WelcomeView extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineLarge!
                   .copyWith(fontSize: 28.0),),
             SvgPicture.asset("assets/svg/logo.svg"),
-            JoyveeElevatedButton(
-                style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                    minimumSize: MaterialStateProperty.all<Size>(const Size(200, 0))),
-                func: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView())),
-                child: const Text('SignIn')),
+            SizedBox(
+              width: SizeConfig.blockSizeHorizontal! * 30,
+              child: JoyveeElevatedButton(
+                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                      minimumSize: MaterialStateProperty.all<Size>(const Size.fromHeight(0)),
+                    ),
+                  func: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView())),
+                  child: const Text('SignIn')),
+            ),
             JoyveeTextButton(
                 style: Theme.of(context).textButtonTheme.style!.copyWith(
                     textStyle: MaterialStateProperty.all<TextStyle>(const TextStyle(fontSize: 15))),

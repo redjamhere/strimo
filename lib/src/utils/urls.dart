@@ -57,7 +57,7 @@ class BroadcastAPI {
 class LiveAPI {
   static const String rtmpURL = '${ProjectConfig.RTMP}/live_redirect/';
   static const String hlsURL = '${ProjectConfig.REST}/hls/';
-  static const String streamLiveChatURL = '${ProjectConfig.WS}/ws/';
+  static const String streamLiveChatURL = '${ProjectConfig.WS}/chat/';
 }
 
 class ImageAPI {
@@ -70,11 +70,12 @@ class VideoAPI {
 }
 
 class MessengerAPI {
-  static const String chatsURL = '${ProjectConfig.REST}/back/messenger/chats/';
+  static const String chatsURL = '${ProjectConfig.REST}/api/messenger/chats/';
   static const String messagesURL =
       '${ProjectConfig.REST}/api/messenger/get_messages/';
   static const String deleteChatURL =
       '${ProjectConfig.REST}/api/messenger/delete_chat/';
+  static const String messengerLiveURL = '${ProjectConfig.WS}/messenger';
 }
 
 class RecommendationAPI {

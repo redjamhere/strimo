@@ -36,7 +36,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(profileLoadingStatus: FormzStatus.submissionInProgress));
     try {
-      JProfile p = await _profileRepository.getProfile(_userRepository.user);
+      JProfile p = await _profileRepository
+        .getProfile(id: event.userId?? _userRepository.user.id!, token: _userRepository.user.token!);
       List<UserLastStream> ls = await _profileRepository.getUserLastStreams(_userRepository.user);
       emit(state.copyWith(
         profile: p, 

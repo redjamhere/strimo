@@ -22,5 +22,4 @@ Future<void> main() async {
     messengerRepository: MessengerRepository(),
     searchRepository: SearchRepository(),
   )));
-  // print(kMessages[DateTime(2023, 3, 1, 14, 18)]);
 }

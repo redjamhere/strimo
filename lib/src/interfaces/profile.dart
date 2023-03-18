@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:equatable/equatable.dart';
 import 'package:joyvee/src/utils/utils.dart';
 
 import '../models/models.dart';
 
-abstract class Profile {
+abstract class Profile extends Equatable {
   final int? profileId;
   final int? userId;
   final String? firstname;

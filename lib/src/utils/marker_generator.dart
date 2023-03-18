@@ -30,7 +30,7 @@ class MarkerGenerator {
         },
         maintainState: true);
 
-    Overlay.of(context)!.insert(entry);
+    Overlay.of(context).insert(entry);
   }
 }
 

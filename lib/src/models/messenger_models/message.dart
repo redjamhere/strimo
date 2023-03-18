@@ -1,41 +1,67 @@
 import 'package:equatable/equatable.dart';
 import 'package:joyvee/src/utils/utils.dart';
+import 'package:joyvee/src/interfaces/interfaces.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
-class Message extends Equatable {
+
+class Message extends MessageInterface {
 
   const Message({
-    required this.id,
-    required this.chatId,
-    required this.senderId,
-    this.messageType = MessageType.message,
-    required this.requesterId,
-    required this.date,
-    required this.content,
-    this.streamId,
-  });
-
-  final int id;
-  final int chatId;
-  final int senderId;
-  final MessageType messageType;
-  final dynamic content;
-  final int requesterId;
-  final int? streamId;
-  final DateTime date;
+    required int id,
+    required int chatId,
+    required int senderId,
+    MessageType type = MessageType.message,
+    required DateTime date,
+    required dynamic content
+  }): super(
+    id: id,
+    chatId: chatId,
+    senderId: senderId,
+    type: type,
+    date: date,
+    content: content
+  );
 
   factory Message.fromJson(Map<String, dynamic> data) => Message(
-    id: data['id'],
+    id: data['message_id'],
     chatId: data['chat_id'],
     senderId: data["sender"],
-    requesterId: data["requester"] ?? 0,
-    messageType: JoyveeFunctions.intToMessageType(data['type_id']),
+    type: JoyveeFunctions.intToMessageType(data['type_id']),
     content: data['content'],
     date: DateTime.parse(data['date_create'])
   );
 
+  // Map<String, dynamic> toJson() => {
+  //   "chat_id": chatId,
+  //   "type": type.toString(),
+  //   "receiver_id": requesterId,
+  //   "content": content
+  // };
+
   @override
-  List<Object> get props => [id, chatId];
+  List<Object> get props => [id!, chatId!];
 
   @override
   String toString() => '$id: $date';
+}
+
+class SendedMessage extends MessageInterface {
+  const SendedMessage({
+    MessageType type = MessageType.message,
+    required dynamic content,
+    required int receiverId
+  }) : super(
+    type: type,
+    content: content,
+    receiverId: receiverId
+  );
+
+  Map<String, dynamic> toJson() => {
+    "type": EnumToString.convertToString(type),
+    "content": content,
+    "receiver_id": receiverId
+  };
+
+  @override
+  List<Object> get props => [receiverId!];
 }

@@ -1,16 +1,31 @@
 
 //services
+import 'package:joyvee/src/interfaces/repository_interface.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
+
 import '../services/services.dart';
 //models
 import '../models/models.dart';
 
-class ProfileRepository {
+class ProfileRepository with UserMixin implements Repository {
   JProfile _profile = JProfile.empty;
 
   JProfile get profile => _profile;
 
   final ProfileService _profileApi = ProfileService();
 
+  ProfileRepository() {
+    init();
+  }
+
+  @override
+  void init() async {
+    var token = await getToken();
+    if (token != null) {
+      var id = await getId();
+      await getProfile(token: token, id: id!);
+    }
+  }
 
   // Отправка инфорации о профиле при регистрации
   Future sendProfileData(RegistrationProfile p, JUser user) async {
@@ -23,8 +38,12 @@ class ProfileRepository {
   } 
 
   // Получение профиля
-  Future<JProfile> getProfile(JUser user) async {
-    _profile = await _profileApi.getProfile(user);
+  Future<JProfile> getProfile({required String token, required int id}) async {
+    if (_profile != JProfile.empty) {
+      return _profile;
+    }
+    Map<String, dynamic> result = await _profileApi.getProfile(token: token, id: id);
+    _profile = JProfile.fromJson(result);
     return _profile;
   }
 

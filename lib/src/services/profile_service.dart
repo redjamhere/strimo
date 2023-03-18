@@ -56,18 +56,18 @@ class ProfileService {
     }
   }
 
-  Future<JProfile> getProfile(JUser user) async {
-    http.Response response = await http.get(Uri.parse('${UserAPI.profileURL}${user.id}'),
+  Future<Map<String, dynamic>> getProfile({required String token, required int id}) async {
+    http.Response response = await http.get(Uri.parse('${UserAPI.profileURL}$id'),
       headers: <String, String> {
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': 'Bearer ${user.token}'
+        'Authorization': 'Bearer $token'
       }
     );
     
     Map<String, dynamic> result = json.decode(utf8.decode(response.bodyBytes));
     HttpError status = JoyveeFunctions.generateHttpException(result);
     if (status.result) {
-      return JProfile.fromJson(result);
+      return result;
     } else {
       throw status;
     }

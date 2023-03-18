@@ -97,12 +97,14 @@ class _JoyveeAppViewState extends State<JoyveeAppView> {
                                   mapRepository: context.read<MapRepository>()
                                 )..add(LivemapFetchMarkersRequested())),
                               BlocProvider(
-                                create: (_) => MessengerBloc(
+                                lazy: false,
+                                create: (_) => ChatsBloc(
                                   userRepository: context.read<UserRepository>(), 
-                                  messengerRepository: context.read<MessengerRepository>()),
-                              )
+                                  messengerRepository: context.read<MessengerRepository>())
+                                    ..add(ChatsRequested()),
+                              ),
                             ],
-                            child: Wrapper(),
+                            child: const Wrapper(),
                           )),
                   (route) => false);
               break;

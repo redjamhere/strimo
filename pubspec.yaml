@@ -44,7 +44,8 @@ dependencies:
   custom_marker: ^1.0.0
   google_maps_cluster_manager: ^3.0.0+1
   very_good_infinite_list: ^0.7.0
-  
+  web_socket_channel: ^2.3.0
+
   #data
   image_picker: ^0.8.5+3
   http: ^0.13.4
@@ -68,6 +69,8 @@ dependencies:
   camera: ^0.10.3
   collection:
   youtube_player_flutter: ^8.1.2
+  flutter_dotenv: ^5.0.2
+  enum_to_string: ^2.0.1
   
   #GOOGLE
   google_maps_flutter: ^2.1.7

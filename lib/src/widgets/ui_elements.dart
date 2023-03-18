@@ -404,7 +404,7 @@ class JoyveeProfileAvatar extends StatelessWidget {
               height: 12,
               width: 12,
               decoration: BoxDecoration(
-                  color: (isStreaming) ? JoyveeColors.jvGreen : JoyveeColors.jvRed,
+                  color: (isStreaming) ? JoyveeColors.jvRed : JoyveeColors.jvGreen,
                   border: Border.all(
                       width: 2,
                       color: Colors.white

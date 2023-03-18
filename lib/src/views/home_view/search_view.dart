@@ -166,7 +166,9 @@ class _UserListView extends StatelessWidget {
                       if (state.searchCategory == SearchCategory.user) {
                         context
                             .read<ProfileBloc>()
-                            .add(const ProfileRequestedEvent(isMy: false));
+                            .add(ProfileRequestedEvent(
+                              isMy: false, 
+                              userId: state.users.profiles[index].userId));
                       }
                     },
                     title: Text(
@@ -176,11 +178,9 @@ class _UserListView extends StatelessWidget {
                     subtitle: Text(state.users.profiles[index].username!),
                     trailing: Text(
                         'Followers: ${state.users.profiles[index].followers}'),
-                    leading: const CircleAvatar(
-                      backgroundImage: AssetImage('assets/jpg/appicon-bw.jpg'),
-                      // foregroundImage: NetworkImage(state.users.profiles[index].avatar!),
-                      foregroundImage:
-                          NetworkImage('https://i.pravatar.cc/300'),
+                    leading: CircleAvatar(
+                      backgroundImage: const AssetImage('assets/jpg/appicon-bw.jpg'),
+                      foregroundImage: NetworkImage(state.users.profiles[index].avatar!),
                     ),
                   );
                 });

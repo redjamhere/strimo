@@ -30,4 +30,7 @@ class ActiveUserModel extends Profile{
 
   @override
   String toString() => '$userId';
+
+  @override
+  List<Object> get props => [userId!];
 }

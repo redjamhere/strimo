@@ -4,7 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:joyvee/src/cubit/messenger_cubit/messenger_cubit.dart';
+import 'package:joyvee/src/models/models.dart';
+import 'package:joyvee/src/repository/respository.dart';
 import 'package:joyvee/src/utils/utils.dart';
+import 'package:joyvee/src/views/messenger_view/chat_view.dart';
 import 'package:joyvee/src/views/profile_view/edit_profile_view.dart';
 import 'package:joyvee/src/widgets/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -23,13 +27,13 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (previous, current) => 
-        previous.profileLoadingStatus != current.profileLoadingStatus
-        || previous.profileUpdatingStatus != current.profileUpdatingStatus,
+      buildWhen: (previous, current) =>
+          previous.profileLoadingStatus != current.profileLoadingStatus ||
+          previous.profileUpdatingStatus != current.profileUpdatingStatus,
       builder: (context, state) {
-        if (state.profileLoadingStatus.isSubmissionInProgress || state.profileLoadingStatus.isPure) {
+        if (state.profileLoadingStatus.isSubmissionInProgress ||
+            state.profileLoadingStatus.isPure) {
           return const FullScreenProgressIndicator();
         } else if (state.profileLoadingStatus.isSubmissionSuccess) {
           return Scaffold(
@@ -54,7 +58,9 @@ class ProfileView extends StatelessWidget {
             ),
             body: LiquidPullToRefresh(
               onRefresh: () async {
-                context.read<ProfileBloc>().add(ProfileRequestedEvent());
+                context
+                    .read<ProfileBloc>()
+                    .add(const ProfileRequestedEvent());
               },
               springAnimationDurationInMilliseconds: 500,
               showChildOpacityTransition: false,
@@ -62,8 +68,8 @@ class ProfileView extends StatelessWidget {
                 slivers: [
                   SliverAppBar(
                     elevation: 5,
-                    automaticallyImplyLeading: false,
                     pinned: true,
+                    automaticallyImplyLeading: false,
                     toolbarHeight: SizeConfig.blockSizeVertical! * 12,
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,8 +90,8 @@ class ProfileView extends StatelessWidget {
                         Column(
                           children: [
                             Text(state.profile.followers!.toString(),
-                                style:
-                                    const TextStyle(fontSize: 20, color: Colors.black)),
+                                style: const TextStyle(
+                                    fontSize: 20, color: Colors.black)),
                             Text(
                               "Подписки",
                               style: Theme.of(context)
@@ -99,7 +105,8 @@ class ProfileView extends StatelessWidget {
                           children: [
                             Text(
                               state.profile.subscribers!.toString(),
-                              style: const TextStyle(fontSize: 20, color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.black),
                             ),
                             Text(
                               "Подписчики",
@@ -114,7 +121,8 @@ class ProfileView extends StatelessWidget {
                           children: [
                             Text(
                               state.profile.rating!.toString(),
-                              style: const TextStyle(fontSize: 20, color: Colors.black),
+                              style: const TextStyle(
+                                  fontSize: 20, color: Colors.black),
                             ),
                             Text(
                               "рейтинг",
@@ -129,6 +137,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                   SliverList(
+                    key: const ObjectKey("profile_sliver"),
                     delegate: SliverChildBuilderDelegate(
                       childCount: 1,
                       (context, index) {
@@ -152,69 +161,96 @@ class ProfileView extends StatelessWidget {
                               child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      width: SizeConfig.screenWidth,
-                                      child: Text(
-                                        '${state.profile.firstname} ${state.profile.lastname}',
-                                        textAlign: TextAlign.start,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium!
-                                            .copyWith(
-                                                fontSize: 17 *
-                                                    MediaQuery.textScaleFactorOf(
-                                                        context),
-                                                color: Colors.black),
-                                      ),
+                                    Text(
+                                      '${state.profile.firstname} ${state.profile.lastname}',
+                                      textAlign: TextAlign.start,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(
+                                              fontSize: 17 *
+                                                  MediaQuery
+                                                      .textScaleFactorOf(
+                                                          context),
+                                              color: Colors.black),
                                     ),
-                                    if (state.profile.about!.isNotEmpty) SizedBox(height: SizeConfig.blockSizeVertical!),
+                                    if (state.profile.about!.isNotEmpty)
+                                      SizedBox(
+                                          height:
+                                              SizeConfig.blockSizeVertical!),
                                     AutoSizeText(
                                       state.profile.about!,
                                       minFontSize: 12,
                                       textAlign: TextAlign.center,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge,
                                     ),
-                                    SizedBox(height: SizeConfig.blockSizeVertical!),
-                                    if (state.profile.instagramUrl!.isNotEmpty &&
-                                      state.profile.youtubeUrl!.isNotEmpty &&
-                                      state.profile.tiktokUrl!.isNotEmpty)
-                                      SizedBox(height: SizeConfig.blockSizeVertical!),
+                                    SizedBox(
+                                        height:
+                                            SizeConfig.blockSizeVertical!),
+                                    if (state.profile.instagramUrl!
+                                            .isNotEmpty &&
+                                        state
+                                            .profile.youtubeUrl!.isNotEmpty &&
+                                        state.profile.tiktokUrl!.isNotEmpty)
+                                      SizedBox(
+                                          height:
+                                              SizeConfig.blockSizeVertical!),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        if (state.profile.instagramUrl!.isNotEmpty) 
+                                        if (state
+                                            .profile.instagramUrl!.isNotEmpty)
                                           InkWell(
-                                            onTap: () async => await launchUrl(Uri.parse(state.profile.instagramUrl!)),
+                                            onTap: () async =>
+                                                await launchUrl(Uri.parse(
+                                                    state.profile
+                                                        .instagramUrl!)),
                                             child: SvgPicture.asset(
                                               "assets/svg/instagram_profile.svg",
-                                              height:
-                                                  SizeConfig.blockSizeVertical! * 5,
+                                              height: SizeConfig
+                                                      .blockSizeVertical! *
+                                                  5,
                                             ),
                                           ),
-                                        if (state.profile.tiktokUrl!.isNotEmpty) InkWell(
-                                          onTap: () async => await launchUrl(Uri.parse(state.profile.tiktokUrl!)),
-                                          child: SvgPicture.asset(
-                                              "assets/svg/tiktok_profile.svg",
-                                              height:
-                                                  SizeConfig.blockSizeVertical! *
-                                                      5),
-                                        ),
-                                        if (state.profile.youtubeUrl!.isNotEmpty) InkWell(
-                                          onTap: () async => await launchUrl(Uri.parse(state.profile.youtubeUrl!)),
-                                          child: SvgPicture.asset(
-                                              "assets/svg/youtube_profile.svg",
-                                              height:
-                                                  SizeConfig.blockSizeVertical! *
-                                                      5),
-                                        ),                                  
+                                        if (state
+                                            .profile.tiktokUrl!.isNotEmpty)
+                                          InkWell(
+                                            onTap: () async =>
+                                                await launchUrl(Uri.parse(
+                                                    state
+                                                        .profile.tiktokUrl!)),
+                                            child: SvgPicture.asset(
+                                                "assets/svg/tiktok_profile.svg",
+                                                height: SizeConfig
+                                                        .blockSizeVertical! *
+                                                    5),
+                                          ),
+                                        if (state
+                                            .profile.youtubeUrl!.isNotEmpty)
+                                          InkWell(
+                                            onTap: () async =>
+                                                await launchUrl(Uri.parse(
+                                                    state.profile
+                                                        .youtubeUrl!)),
+                                            child: SvgPicture.asset(
+                                                "assets/svg/youtube_profile.svg",
+                                                height: SizeConfig
+                                                        .blockSizeVertical! *
+                                                    5),
+                                          ),
                                       ],
                                     ),
-                                    SizedBox(height: SizeConfig.blockSizeVertical!),
+                                    SizedBox(
+                                        height:
+                                            SizeConfig.blockSizeVertical!),
                                     const _ProfileControlsView()
                                   ])),
                         );
@@ -231,7 +267,8 @@ class ProfileView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                      height: SizeConfig.blockSizeVertical! * 3),
+                                      height:
+                                          SizeConfig.blockSizeVertical! * 3),
                                   Text(
                                     "Последние трансляции".toUpperCase(),
                                     style: Theme.of(context)
@@ -241,7 +278,8 @@ class ProfileView extends StatelessWidget {
                                         MediaQuery.textScaleFactorOf(context),
                                   ),
                                   SizedBox(
-                                      height: SizeConfig.blockSizeVertical! * 3),
+                                      height:
+                                          SizeConfig.blockSizeVertical! * 3),
                                 ],
                               )),
                     ),
@@ -257,12 +295,18 @@ class ProfileView extends StatelessWidget {
                         itemBuilder: (context, index) => ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: InkWell(
-                                onTap: () => print(state.lastStreams[index].filename!),
+                                onTap: () =>
+                                    print(state.lastStreams[index].filename!),
                                 child: CachedNetworkImage(
                                   imageUrl: state.lastStreams[index].preview!,
                                   // imageUrl: "https://picsum.photos/200/300",
-                                  placeholder: (context, url) => const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Image.asset('assets/jpg/appicon-bw.jpg', height: 100,),
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    'assets/jpg/appicon-bw.jpg',
+                                    height: 100,
+                                  ),
                                   fit: BoxFit.fitWidth,
                                 ),
                               ),
@@ -276,8 +320,26 @@ class ProfileView extends StatelessWidget {
               ),
             ),
           );
+        } else if (state.profileLoadingStatus.isSubmissionFailure) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, 
+                  size: 32,
+                  color: Theme.of(context).textTheme.displaySmall!.color),
+                Text("Profile Loading Error",
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    fontSize: 24
+                  ),
+                ),
+              ],
+            ),
+          );
         } else {
-          return Center(child: Text(state.errorMessage.toString()),);
+          return Center(
+            child: Text(state.errorMessage.toString()),
+          );
         }
       },
     );
@@ -295,27 +357,18 @@ class _ProfileControlsView extends StatelessWidget {
         if (state.isMy) {
           return JoyveeOutlinedButton(
             func: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (ctx) => BlocProvider.value(
-                  value: context.read<ProfileBloc>(),
-                  child: ProfileEditView(),
-                )
-              )
-            ),
-            style: Theme.of(context)
-                .outlinedButtonTheme
-                .style!
-                .copyWith(
-                    padding: MaterialStateProperty.all<
-                            EdgeInsetsGeometry>(
-                        EdgeInsets.symmetric(
-                            vertical: SizeConfig
-                                    .blockSizeVertical! *
-                                1.5)),
-                    minimumSize:
-                        MaterialStateProperty.all<Size>(
-                            const Size.fromHeight(0))),
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => BlocProvider.value(
+                          value: context.read<ProfileBloc>(),
+                          child: ProfileEditView(),
+                        ))),
+            style: Theme.of(context).outlinedButtonTheme.style!.copyWith(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    EdgeInsets.symmetric(
+                        vertical: SizeConfig.blockSizeVertical! * 1.5)),
+                minimumSize:
+                    MaterialStateProperty.all<Size>(const Size.fromHeight(0))),
             child: const Text(
               "Редактировать",
               style: TextStyle(color: Colors.black),
@@ -326,41 +379,51 @@ class _ProfileControlsView extends StatelessWidget {
             key: const ObjectKey("profile_controls"),
             children: [
               Expanded(
-                child: JoyveeOutlinedButton(
-                  func: () => null,
-                  style: Theme.of(context)
-                      .outlinedButtonTheme
-                      .style!
-                      .copyWith(
-                          padding: MaterialStateProperty.all<
-                                  EdgeInsetsGeometry>(
-                              EdgeInsets.symmetric(
-                                  vertical: SizeConfig
-                                          .blockSizeVertical! *
-                                      1.5)),
-                          minimumSize:
-                              MaterialStateProperty.all<Size>(
+                  child: JoyveeOutlinedButton(
+                      func: () => Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                          create: (context) => MessengerCubit(
+                            openedChat: OpenedChat(receiver: state.profile),
+                            messengerRepository: context.read<MessengerRepository>(),
+                            userRepository: context.read<UserRepository>())..onChatOpened(),
+                          child: const ChatView(key: ObjectKey("new_chat")),
+                        ),
+                      )),
+                      style: Theme.of(context)
+                          .outlinedButtonTheme
+                          .style!
+                          .copyWith(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                      EdgeInsets.symmetric(
+                                          vertical:
+                                              SizeConfig.blockSizeVertical! *
+                                                  1.5)),
+                              minimumSize: MaterialStateProperty.all<Size>(
                                   const Size.fromHeight(0))),
-                  child: const Text(
-                    "Сообщения",
-                    style: TextStyle(color: Colors.black),
-                  ))),
-              SizedBox(width: SizeConfig.blockSizeVertical,),
+                      child: const Text(
+                        "Сообщения",
+                        style: TextStyle(color: Colors.black),
+                      ))),
+              SizedBox(
+                width: SizeConfig.blockSizeVertical,
+              ),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () => null,
-                  style: Theme.of(context)
-                      .elevatedButtonTheme
-                      .style!
-                      .copyWith(
-                        padding: MaterialStatePropertyAll<EdgeInsetsGeometry>(
-                          EdgeInsets.symmetric(vertical:  SizeConfig
-                                          .blockSizeVertical! *
-                                      1.5))
-                      ),
-                  child: const Text(
-                    "Подписаться",
-                  )))
+                  child: ElevatedButton(
+                      onPressed: () => null,
+                      style: Theme.of(context)
+                          .elevatedButtonTheme
+                          .style!
+                          .copyWith(
+                              padding:
+                                  MaterialStatePropertyAll<EdgeInsetsGeometry>(
+                                      EdgeInsets.symmetric(
+                                          vertical:
+                                              SizeConfig.blockSizeVertical! *
+                                                  1.5))),
+                      child: const Text(
+                        "Подписаться",
+                      )))
             ],
           );
         }

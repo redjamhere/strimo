@@ -15,8 +15,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
     required AuthorizationRepository authorizationRepository,
     required UserRepository userRepository,
+    required MessengerRepository messengerRepository
   }) : _authorizationRepository = authorizationRepository, 
        _userRepository = userRepository,
+       _messengerRepository = messengerRepository,
        super(const LoginState()) {
         on<LoginMailChanged>(_onMailChanged);
         on<LoginPasswordChanged>(_onPassowrdChanged);
@@ -26,6 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   final AuthorizationRepository _authorizationRepository;
   final UserRepository _userRepository;
+  final MessengerRepository _messengerRepository;
 
   void _onMailChanged(
     LoginMailChanged event,
@@ -88,6 +91,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         deviceName: deviceInfo.name,
       );
       await _userRepository.saveUserToLocalStorage(user);
+      await _messengerRepository.init();
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(status: FormzStatus.submissionFailure, errorMessage: e.toString()));

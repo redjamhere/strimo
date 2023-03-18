@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:joyvee/src/models/stream_models/jstream.dart';
+import 'package:joyvee/src/models/user_models/juser.dart';
 import 'package:joyvee/src/utils/utils.dart';
 
 import '../../interfaces/interfaces.dart';
@@ -12,7 +13,7 @@ class JProfile extends Profile {
     int? profileId,
     int? userId,
     String? firstname,
-    String? lastname,
+    String? lastname,      
     String? username,
     Sex? gender,
     String? avatar,
@@ -151,4 +152,7 @@ class JProfile extends Profile {
   }
 
   static const empty = JProfile.emptyConst();
+
+  @override
+  List<Object?> get props => [userId];
 }

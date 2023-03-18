@@ -7,8 +7,9 @@ abstract class ProfileEvent extends Equatable {
 }
 
 class ProfileRequestedEvent extends ProfileEvent {
-  const ProfileRequestedEvent({this.isMy = true});
+  const ProfileRequestedEvent({this.isMy = true, this.userId});
   final bool isMy;
+  final int? userId;
   @override
   List<Object> get props => [isMy];
 }

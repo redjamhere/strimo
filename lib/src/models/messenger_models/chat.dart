@@ -1,36 +1,134 @@
 // Описание моделей сообщений и чатов
-
+import 'dart:collection';
+import 'dart:convert';
+import 'package:equatable/equatable.dart';
 import 'package:joyvee/src/interfaces/interfaces.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
+import 'package:joyvee/src/models/models.dart';
 
 import '../../utils/utils.dart';
 import './message.dart';
 
-class Chat {
+class Chat extends Equatable{
   final int id;
-  final ChatType type;
-  final int? ownerId;
   final List<ChatMember> members;
   final Message lastMessage;
-  final bool? isStreamDeleted;
 
   const Chat({
     required this.id,
-    required this.type,
-    this.ownerId,
     required this.members,
     required this.lastMessage,
-    this.isStreamDeleted
   });
 
   factory Chat.fromJson(Map<String, dynamic> data) => Chat(
     id: data['id_chat'],
-    type: JoyveeFunctions.chatTypeFromString(data['type_chat']),
-    ownerId: data['owner_id'],
     members: List.generate(data['members'].length, (index) => ChatMember.fromJson(data['members'][index])),
     lastMessage: Message.fromJson(data['last_msg']),
-    isStreamDeleted: (data['type_chat'] == "STREAM") ? data['is_stream_deleted'] : null,
+  );
+
+  @override
+  List<Object> get props => [id];
+}
+
+class StreamChat extends Chat {
+  const StreamChat({
+    required int id,
+    required List<ChatMember> members,
+    required Message lastMessage,
+    required this.isStreamDeleted
+  }) : super(id: id, members: members, lastMessage: lastMessage);
+
+  final bool isStreamDeleted;
+
+  factory StreamChat.fromJson(Map<String, dynamic> data) => StreamChat(
+    id: data['id_chat'], 
+    members: (data['members'] as List<Map<String, dynamic>>)
+      .map((e) => ChatMember.fromJson(e)).toList(), 
+    lastMessage: Message.fromJson(data['last_msg']), 
+    isStreamDeleted: data['is_stream_deleted']);
+} 
+
+class GroupChat extends Chat {
+  const GroupChat({
+    required int id,
+    required List<ChatMember> members,
+    required this.ownerId,
+    required Message lastMessage,
+  }) : super(id: id, members: members, lastMessage: lastMessage);
+  final int ownerId;
+
+  factory GroupChat.fromJson(Map<String, dynamic> data) => GroupChat(
+    id: data['id_chat'],
+    members: (data['members'] as List<Map<String, dynamic>>)
+      .map((e) => ChatMember.fromJson(e)).toList(),
+    lastMessage: Message.fromJson(data['last_msg']), 
+    ownerId: data['owner_id']
   );
 }
+
+class OpenedChat {
+  OpenedChat({
+    this.chat, 
+    this.messageCount, 
+    this.nextUrl, 
+    LinkedHashMap<DateTime, List<Message>>? messages, 
+    required this.receiver})
+    : _messageList = messages?? LinkedHashMap<DateTime, List<Message>>.from({});
+  
+  final Chat? chat;
+  final int? messageCount;
+  final String? nextUrl;
+  final Profile receiver;
+  
+  final LinkedHashMap<DateTime, List<Message>> _messageList;
+  LinkedHashMap<DateTime, List<Message>> get messages => _messageList;
+
+  factory OpenedChat.fromJson(Map<String, dynamic> data, ChatMember receiver) {
+    var messageList = (data['results']['data'] as List)
+      .map((e) => Message.fromJson(e)).toList();
+    var mappedMessages = Map.fromIterable((messageList),
+      key: (item) => (item as Message).date!.toUtc(),
+      value:  (item) {
+        List<Message> mss = [];
+        for (Message m in messageList) {
+          if (m.date!.year == item.date.year && m.date!.day == item.date.day && m.date!.month == item.date.month) {
+            mss.add(m);
+          }
+        }
+        return mss;
+      }
+    );
+    return OpenedChat(
+      messages: LinkedHashMap<DateTime, List<Message>>(
+        equals: (DateTime? a, DateTime? b) {
+          if (a == null || b == null) {
+            return false;
+          }
+          return a.year == b.year && a.month == b.month && a.day == b.day;
+        }
+      )..addAll(mappedMessages),
+      nextUrl: data['next'],
+      messageCount: data['count'],
+      receiver: receiver
+    );
+  }
+
+  OpenedChat copyWith({
+    Chat? chat,
+    int? messageCount,
+    String? nextUrl,
+    Profile? receiver,
+    LinkedHashMap<DateTime, List<Message>>? messages, 
+  }) => OpenedChat(
+    chat: chat?? this.chat,
+    receiver: receiver?? this.receiver,
+    nextUrl: nextUrl?? this.nextUrl,
+    messageCount: messageCount?? this.messageCount,
+    messages: messages?? this.messages,
+  );
+}
+
+
 
 class ChatMember extends Profile {
   const ChatMember({
@@ -51,54 +149,12 @@ class ChatMember extends Profile {
       userId: data['user_id'],
       firstname: data['firstname'],
       lastname: data['lastname'],
-      avatar: data['avatar'],
+      avatar: "${ImageAPI.avatarsURL}${data['avatar']}.jpg",
       isOnline: data['is_online']);
 
   @override
   Map<String, dynamic> toJson() => {};
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [userId!];
 }
-
-// class Message {
-//   final int? id;
-//   final int? chatId;
-//   final int senderId;
-//   final MessageType type;
-//   final dynamic content;
-//   final int? requesterId;
-//   final int? streamId;
-//   final DateTime? createTime;
-//
-//   const Message({
-//     this.id,
-//     this.chatId,
-//     required this.senderId,
-//     required this.type,
-//     required this.content,
-//     this.requesterId,
-//     this.streamId,
-//     this.createTime});
-//
-//   factory Message.fromJson(Map<String, dynamic> data) => Message(
-//       id: data['id'],
-//       chatId: data['chat_id'],
-//       senderId: data["sender"],
-//       type: JoyveeFunctions.intToMessageType(data['type_id']),
-//       content: data['content'],
-//       createTime: DateTime.parse(data['date_create'])
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "chat_id": chatId,
-//     "sender": senderId,
-//     "stream_id": streamId,
-//     "type": JoyveeFunctions.messageTypeToString(type),
-//     "requester_id": requesterId,
-//     "content": content
-//   };
-//
-//   @override
-//   String toString() => 'MESSAGE FROM $senderId';
-// }

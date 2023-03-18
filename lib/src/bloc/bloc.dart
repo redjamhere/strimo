@@ -7,4 +7,4 @@ export 'stream_chat_bloc/stream_chat_bloc.dart';
 export 'profile_bloc/profile_bloc.dart';
 export 'livemap_bloc/livemap_bloc.dart';
 export 'ios_camera_bloc/ios_camera_bloc.dart';
-export 'messenger_bloc/messenger_bloc.dart';
+export 'chats_bloc/chats_bloc.dart';

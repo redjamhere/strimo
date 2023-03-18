@@ -43,4 +43,7 @@ class RegistrationProfile extends Profile {
   String toString() => "$firstname $lastname";
 
   static const empty = RegistrationProfile._();
+
+  @override
+  List<Object> get props => [];
 }

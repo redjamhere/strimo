@@ -25,3 +25,4 @@ export 'map_models/map_content.dart';
 
 export 'messenger_models/message.dart';
 export 'messenger_models/chat.dart';
+export 'messenger_models/chat_list.dart';

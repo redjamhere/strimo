@@ -5,3 +5,4 @@ export 'stream_service.dart';
 export 'authorization_service.dart';
 export 'profile_service.dart';
 export 'search_service.dart';
+export 'messenger_service.dart';

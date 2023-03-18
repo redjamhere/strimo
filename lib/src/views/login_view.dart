@@ -65,24 +65,29 @@ class _LoginViewState extends State<LoginView> {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
-        return JoyveeElevatedButton(
-            style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                minimumSize:
-                    MaterialStateProperty.all<Size>(const Size(200, 0))),
-            func: state.status.isValidated
-                ? () => context.read<LoginBloc>().add(const LoginSubmitted())
-                : null,
-            child: const Text('LogIn'));
+        return SizedBox(
+          width: SizeConfig.blockSizeHorizontal! * 30,
+          child: JoyveeElevatedButton(
+              style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                  minimumSize:
+                      MaterialStateProperty.all<Size>(const Size(200, 0))),
+              func: state.status.isValidated
+                  ? () => context.read<LoginBloc>().add(const LoginSubmitted())
+                  : null,
+              child: const Text('LogIn')),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return BlocProvider(
       create: (context) => LoginBloc(
         userRepository: context.read<UserRepository>(),
-        authorizationRepository: context.read<AuthorizationRepository>()
+        authorizationRepository: context.read<AuthorizationRepository>(),
+        messengerRepository: context.read<MessengerRepository>()
       ),
       child: BlocConsumer<LoginBloc, LoginState>(
         listenWhen: (previous, current) => previous.status != current.status,
@@ -92,7 +97,7 @@ class _LoginViewState extends State<LoginView> {
                 title: "Error", message: state.errorMessage!);
           }
           if (state.status.isSubmissionSuccess) {
-            context.read<AuthorizationBloc>().add(AuthorizationStatusChanged(AuthorizationStatus.authenticated));
+            context.read<AuthorizationBloc>().add(const AuthorizationStatusChanged(AuthorizationStatus.authenticated));
           }
         },
         builder: (context, state) {
