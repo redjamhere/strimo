@@ -246,16 +246,10 @@ class SetupStreamStepTwo extends StatelessWidget {
                     builder: (ctx) => MultiBlocProvider(
                           providers: [
                             BlocProvider(
-                              create: (context) => CameraBloc(
-                                  state.setupedStream,
-                                  userRepository:
-                                      RepositoryProvider.of<UserRepository>(
-                                          context)),
-                            ),
+                              create: (context) => CameraBloc(state.setupedStream)),
                             BlocProvider(
                               create: (context) => StreamChatBloc(
                                 streamInfo: state.setupedStream,
-                                userRepository: context.read<UserRepository>(),
                                 streamChatRepository: context.read<StreamChatRepository>()
                               ),
                             ),
@@ -273,17 +267,13 @@ class SetupStreamStepTwo extends StatelessWidget {
                         BlocProvider(
                           create: (context) => IosCameraBloc(
                               state.setupedStream,
-                              iosStreamRepository: RepositoryProvider.of<IosStreamRepository>(context),
-                              userRepository: RepositoryProvider
-                                  .of<UserRepository>(context))
+                              iosStreamRepository: RepositoryProvider.of<IosStreamRepository>(context))
                           ..add(IosCameraInitPlatformEvent()),
                         ),
                         BlocProvider(
                           create: (context) => StreamChatBloc(
                             streamInfo: state.setupedStream,
-                            userRepository: context.read<UserRepository>(),
-                            streamChatRepository: context.read<StreamChatRepository>()
-                          ),
+                            streamChatRepository: context.read<StreamChatRepository>()),
                         )
                       ],
                       child: IosCameraView())

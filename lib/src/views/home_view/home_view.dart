@@ -74,8 +74,7 @@ class _HomeViewState extends State<HomeView>
                                                           SearchRepository>()),
                                         ),
                                         BlocProvider(
-                                          create: (context) => ProfileBloc(
-                                            userRepository: context.read<UserRepository>(), 
+                                          create: (context) => ProfileBloc( 
                                             profileRepository: context.read<ProfileRepository>())),
                                       ],
                                       child: const SearchView(),

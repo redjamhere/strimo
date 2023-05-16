@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:joyvee/src/mixin/user_storage_mixin.dart';
 import 'package:joyvee/src/utils/enums.dart';
 
 import '../models/models.dart';
@@ -8,14 +9,13 @@ import '../services/services.dart';
 
 enum AuthorizationStatus { unknow, authenticated, unauthenticated, error }
 
-class AuthorizationRepository {
+class AuthorizationRepository with UserStorageMixin {
   final StreamController<AuthorizationStatus> _controller = StreamController<AuthorizationStatus>.broadcast();
-  final UserService _userAPI = UserService();
   final AuthorizationService _authAPI = AuthorizationService();
 
   //поток данных для статуса авторизации
   Stream<AuthorizationStatus> get status async* {
-    JUser? u = await _userAPI.getUserFromLocalStorage();
+    JUser? u = getUserFromStorage();
     // ignore: unnecessary_null_comparison
     if (u == null) {
       yield AuthorizationStatus.unauthenticated;
@@ -90,7 +90,7 @@ class AuthorizationRepository {
   }
 
   Future<void> logOut() async {
-    await _userAPI.removeUserFromLocalStorage();
+    removeUserFromStorage();
     await FirebaseAuth.instance.signOut();
     _controller.add(AuthorizationStatus.unauthenticated);
   }

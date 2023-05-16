@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:joyvee/src/cubit/messenger_cubit/messenger_cubit.dart';
+import 'package:joyvee/src/bloc/messenger_bloc/messenger_bloc.dart';
 import 'package:joyvee/src/models/models.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:joyvee/src/utils/utils.dart';
@@ -382,10 +382,9 @@ class _ProfileControlsView extends StatelessWidget {
                   child: JoyveeOutlinedButton(
                       func: () => Navigator.push(context, MaterialPageRoute(
                         builder: (context) => BlocProvider(
-                          create: (context) => MessengerCubit(
+                          create: (context) => MessengerBloc(
                             openedChat: OpenedChat(receiver: state.profile),
-                            messengerRepository: context.read<MessengerRepository>(),
-                            userRepository: context.read<UserRepository>())..onChatOpened(),
+                            messengerRepository: context.read<MessengerRepository>())..add(ChatViewOpened()),
                           child: const ChatView(key: ObjectKey("new_chat")),
                         ),
                       )),

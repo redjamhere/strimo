@@ -19,4 +19,7 @@ abstract class MessageInterface extends Equatable{
   final int? receiverId;
   final DateTime? date;
   final dynamic content;
+
+  List<Object?> get props => [
+    id, chatId, senderId, type, receiverId, date, content];
 }

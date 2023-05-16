@@ -37,8 +37,8 @@ class AuthorizationService extends SocialAuthInterface {
     if (status.result) {
       return JUser.fromJson(json.decode(response.body)['data']);
     } else if (response.statusCode == 401) {
-      var usr = JUser.fromJson(json.decode(response.body)['data']);
-      return usr.copyWith(isDeleted: true);
+      var user = JUser.fromJson(json.decode(response.body)['data']);
+      return user.copyWith(isDeleted: true);
     } else {
       throw status;
     }

@@ -1,37 +1,61 @@
 // описание модели пользователя
 
-import 'package:joyvee/src/interfaces/interfaces.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class JUser extends User {
+part 'juser.g.dart';
+
+@HiveType(typeId: 0)
+class JUser extends HiveObject{
   JUser({
-    int? id,
-    String? email,
-    String? token,
-    bool? isDeleted,
-    String? sysLang,
-    String? registrationId,
-    String? deviceName,
-    String? deviceId,
-    String? idToken,
-    String? socialUID,
-    String? currency,
-    String? streamKey
-  }) : super(
-    id: id,
-    email: email,
-    token: token,
-    isDeleted: isDeleted,
-    sysLang: sysLang,
-    deviceName: deviceName,
-    deviceId: deviceId,
-    registrationId: registrationId,
-    idToken: idToken,
-    socialUID: socialUID,
-    currency: currency,
-    streamKey: streamKey
-  );
+   this.id,
+   this.email,
+   this.token,
+   this.isDeleted,
+   this.sysLang,
+   this.deviceName,
+   this.deviceId,
+   this.registrationId,
+   this.idToken,
+   this.socialUID,
+   this.currency,
+   this.streamKey
+  });
 
-  const JUser.emptyConst() : super();
+  @HiveField(0)
+  final int? id;
+
+  @HiveField(1)
+  final String? email;
+
+  @HiveField(2)
+  final String? token;
+
+  @HiveField(3)
+  final bool? isDeleted;
+
+  @HiveField(4)
+  final String? sysLang;// язык приложения
+  
+  @HiveField(5)
+  final String? deviceName;
+
+  @HiveField(6)
+  final String? deviceId;
+
+  @HiveField(7)
+  final String? registrationId;
+
+  @HiveField(8)
+  final String? idToken;
+
+  @HiveField(9)
+  final String? socialUID;
+
+  @HiveField(10)
+  final String? currency;
+
+  @HiveField(11)
+  final String? streamKey;
 
   JUser copyWith({
     int? id,
@@ -62,7 +86,6 @@ class JUser extends User {
       streamKey: streamKey?? this.streamKey
     );
   }
-
 
   factory JUser.fromJson(Map<String, dynamic> data) => JUser(
       id: data["id"],
@@ -98,5 +121,5 @@ class JUser extends User {
   @override
   String toString() => "$deviceId $deviceName";
 
-  static const empty = JUser.emptyConst();
+  static JUser empty = JUser();
 }

@@ -1,39 +1,43 @@
 // описание логики мессенджера
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:google_place/google_place.dart';
-import 'package:joyvee/src/cubit/cubit.dart';
 import 'package:joyvee/src/interfaces/interfaces.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
 import 'package:joyvee/src/repository/respository.dart';
-import 'package:joyvee/src/views/messenger_view/chat_view.dart';
 
 part 'chats_state.dart';
 part 'chats_event.dart';
 
-class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
+class ChatsBloc extends Bloc<ChatsEvent, ChatsState> with UserStorageMixin{
   ChatsBloc({
-    required UserRepository userRepository,
     required MessengerRepository messengerRepository,
   })
-  : _userRepository = userRepository,
-    _messengerRepository = messengerRepository,
+  : _messengerRepository = messengerRepository,
     super(const ChatsState()) {
       on<ChatsRequested>(_onChatsRequested);
       on<ChatOpened>(_onChatOpened);
+      on<ChatLastMessageUpdated>(_onChatLastMessageUpdated);
     }
     
-  final UserRepository _userRepository;
   final MessengerRepository _messengerRepository;
+  late final StreamSubscription _messagesSubscription;
+  
+  @override
+  Future<void> close() {
+    _messagesSubscription.cancel();
+    return super.close();
+  }  
 
   void _onChatsRequested(
     ChatsRequested event,
     Emitter<ChatsState> emit
   ) async {
-    await emit.forEach(_messengerRepository.fetchChats(user: _userRepository.user), onData: (list) {
+    var user = getUserFromStorage();
+    await emit.forEach(_messengerRepository.fetchChats(user: user!), onData: (list) {
       if (list is List<StreamChat>) {
         return state.copyWith(streamChats: list);
       }
@@ -42,6 +46,18 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
       }
       return state.copyWith(defaultChats: list);
     });
+  }
+
+  void _onChatLastMessageUpdated(
+    ChatLastMessageUpdated event,
+    Emitter<ChatsState> emit
+  ) async {
+    await emit.forEach(_messengerRepository.messageStream.getResponse, 
+      onData: (message) {
+        int cIndex = state.defaultChats.indexWhere((element) => element.id == message.chatId);
+        state.defaultChats[cIndex] = state.defaultChats[cIndex].copyWith(lastMessage: message);
+        return state.copyWith(defaultChats: state.defaultChats);
+      });
   }
 
   void _onChatOpened(
@@ -58,4 +74,5 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     }
     emit(state.copyWith(openedChat: op));
   }
+
 }

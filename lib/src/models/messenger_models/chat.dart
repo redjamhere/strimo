@@ -26,6 +26,16 @@ class Chat extends Equatable{
     lastMessage: Message.fromJson(data['last_msg']),
   );
 
+  Chat copyWith({
+    int? id,
+    List<ChatMember>? members,
+    Message? lastMessage
+  }) => Chat(
+    id: id?? this.id,
+    members: members?? this.members,
+    lastMessage: lastMessage?? this.lastMessage
+  );
+
   @override
   List<Object> get props => [id];
 }
@@ -71,61 +81,43 @@ class OpenedChat {
     this.chat, 
     this.messageCount, 
     this.nextUrl, 
-    LinkedHashMap<DateTime, List<Message>>? messages, 
-    required this.receiver})
-    : _messageList = messages?? LinkedHashMap<DateTime, List<Message>>.from({});
+    this.messages = const [],
+    required this.receiver});
   
   final Chat? chat;
   final int? messageCount;
   final String? nextUrl;
   final Profile receiver;
-  
-  final LinkedHashMap<DateTime, List<Message>> _messageList;
-  LinkedHashMap<DateTime, List<Message>> get messages => _messageList;
+  final List<Message> messages;
 
-  factory OpenedChat.fromJson(Map<String, dynamic> data, ChatMember receiver) {
-    var messageList = (data['results']['data'] as List)
-      .map((e) => Message.fromJson(e)).toList();
-    var mappedMessages = Map.fromIterable((messageList),
-      key: (item) => (item as Message).date!.toUtc(),
-      value:  (item) {
-        List<Message> mss = [];
-        for (Message m in messageList) {
-          if (m.date!.year == item.date.year && m.date!.day == item.date.day && m.date!.month == item.date.month) {
-            mss.add(m);
-          }
-        }
-        return mss;
-      }
-    );
-    return OpenedChat(
-      messages: LinkedHashMap<DateTime, List<Message>>(
-        equals: (DateTime? a, DateTime? b) {
-          if (a == null || b == null) {
-            return false;
-          }
-          return a.year == b.year && a.month == b.month && a.day == b.day;
-        }
-      )..addAll(mappedMessages),
-      nextUrl: data['next'],
-      messageCount: data['count'],
-      receiver: receiver
-    );
-  }
+  factory OpenedChat.fromJson(Map<String, dynamic> data, ChatMember receiver) => OpenedChat(
+    messages: (data['results']['data'] as List)
+        .map((e) => Message.fromJson(e)).toList(),
+    nextUrl: data['next'],
+    messageCount: data['count'],
+    receiver: receiver
+  );
+  
 
   OpenedChat copyWith({
     Chat? chat,
     int? messageCount,
     String? nextUrl,
     Profile? receiver,
-    LinkedHashMap<DateTime, List<Message>>? messages, 
+    List<Message>? messages
   }) => OpenedChat(
     chat: chat?? this.chat,
     receiver: receiver?? this.receiver,
     nextUrl: nextUrl?? this.nextUrl,
     messageCount: messageCount?? this.messageCount,
-    messages: messages?? this.messages,
+    messages: messages?? this.messages
   );
+
+  OpenedChat addMessage(Message message) {
+    messages.add(message);
+    return this;
+  }
+
 }
 
 

@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:hashtagable/functions.dart';
 import 'package:joyvee/src/cubit/cubit.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 
 //utils
 import '../../utils/utils.dart';
@@ -21,7 +22,8 @@ import '../../repository/respository.dart';
 part 'stream_setup_state.dart';
 part 'stream_setup_event.dart';
 
-class StreamSetupBloc extends Bloc<StreamSetupEvent, StreamSetupState> {
+class StreamSetupBloc extends Bloc<StreamSetupEvent, StreamSetupState> 
+  with UserStorageMixin{
   StreamSetupBloc({
     required StreamType streamType,
     required StreamRepository streamRepository,
@@ -30,7 +32,7 @@ class StreamSetupBloc extends Bloc<StreamSetupEvent, StreamSetupState> {
   })
     : _userRepository = userRepository,
       _streamRepository = streamRepository,
-      super(StreamSetupState(streamType: streamType, currency: userRepository.user.currency!)) {
+      super(StreamSetupState(streamType: streamType, currency: (AppStorage.storage.getAt(0) as JUser).currency!)) {
         on<StreamSetupNameChanged>(_onStreamSetupNameChanged);
         on<StreamSetupDescriptionChanged>(_onStreamSetupDescriptionChanged);
         on<StreamSetupPreviewPicked>(_onStreamSetupPreviewPicked);
@@ -150,7 +152,7 @@ class StreamSetupBloc extends Bloc<StreamSetupEvent, StreamSetupState> {
     emit(state.copyWith(streamSetupSecondStepStatus: FormzStatus.submissionInProgress));
     if (state.streamSetupSecondStepStatus.isValidated) {
       try {
-        JUser u = await _userRepository.getUserFromLocalStorage();
+        var u = getUserFromStorage();
         JStream stream = state.setupedStream.copyWith(
           title: state.name.value,
           description: state.description.value,
@@ -159,7 +161,7 @@ class StreamSetupBloc extends Bloc<StreamSetupEvent, StreamSetupState> {
           streamType: state.streamType,
           tags: extractHashTags(state.description.value),
           cost: state.cost.value,
-          owner: StreamOwner(userId: u.id!)
+          owner: StreamOwner(userId: u!.id!)
         );
         stream = await _streamRepository.createBroadcast(stream, u.token!);
         emit(state.copyWith(streamSetupSecondStepStatus: FormzStatus.submissionSuccess, setupedStream: stream, streamStartKey: u.streamKey));

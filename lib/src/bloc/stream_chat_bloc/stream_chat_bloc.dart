@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -9,14 +10,12 @@ import 'package:socket_io_client/socket_io_client.dart';
 part 'stream_chat_event.dart';
 part 'stream_chat_state.dart';
 
-class StreamChatBloc extends Bloc<StreamChatEvent, StreamChatState> {
+class StreamChatBloc extends Bloc<StreamChatEvent, StreamChatState> with UserStorageMixin{
   StreamChatBloc({
     required JStream streamInfo,
-    required UserRepository userRepository,
     required StreamChatRepository streamChatRepository
   }) 
-    : _userRepository = userRepository,
-    _streamChatRepository = streamChatRepository,
+    : _streamChatRepository = streamChatRepository,
     super(StreamChatState(streamInfo: streamInfo)) {
       on<StreamChatConnected>(_onStreamChatConnected);
       on<StreamChatConnect>(_onStreamChatConnect);
@@ -24,7 +23,6 @@ class StreamChatBloc extends Bloc<StreamChatEvent, StreamChatState> {
       on<StreamChatSendMessage>(_onStreamChatSendMessage);
     }
   
-  final UserRepository _userRepository;
   final StreamChatRepository _streamChatRepository;
 
   void _onStreamChatConnected(
@@ -38,7 +36,8 @@ class StreamChatBloc extends Bloc<StreamChatEvent, StreamChatState> {
     StreamChatConnect event,
     Emitter<StreamChatState> emit
   ) {
-    _streamChatRepository.connectToChat(_userRepository.user.token!, state.streamInfo.key!);
+    var user = getUserFromStorage();
+    _streamChatRepository.connectToChat(user!.token!, state.streamInfo.key!);
     _streamChatRepository.socket.onConnect((data) => add(const StreamChatConnected()));
     _streamChatRepository.socket.onDisconnect((data) => add(const StreamChatDisconnected()));
     _streamChatRepository.socket.on('receive_message', 

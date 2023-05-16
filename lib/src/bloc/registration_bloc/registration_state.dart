@@ -1,7 +1,7 @@
 part of 'registration_bloc.dart';
 
 class RegistrationState extends Equatable {
-  const RegistrationState({
+  RegistrationState({
     this.profileStatus = FormzStatus.pure,
     this.firstname = const Firstname.pure(),
     this.lastname = const Lastname.pure(),
@@ -14,8 +14,8 @@ class RegistrationState extends Equatable {
     this.codeStatus = FormzStatus.pure,
     this.errorMessage,
     this.profile = RegistrationProfile.empty,
-    this.user = JUser.empty,
-    this.socialAuthStatus = FormzStatus.pure
+    this.socialAuthStatus = FormzStatus.pure,
+    this.user
   });
 
   final FormzStatus profileStatus;
@@ -35,7 +35,7 @@ class RegistrationState extends Equatable {
   final String? errorMessage;
   
   final RegistrationProfile profile;
-  final JUser user;
+  final JUser? user;
 
   RegistrationState copyWith({
     FormzStatus? profileStatus,
@@ -70,5 +70,18 @@ class RegistrationState extends Equatable {
   );
 
   @override
-  List<Object> get props => [profile, profileStatus, firstname, lastname, sex, credentialStatus, mail, password, repeatPassword, codeStatus, otpCode, user, socialAuthStatus];
+  List<Object?> get props => [
+    profile, 
+    profileStatus, 
+    firstname, 
+    lastname, 
+    sex, 
+    credentialStatus, 
+    mail, 
+    password, 
+    repeatPassword, 
+    codeStatus, 
+    otpCode, 
+    user, 
+    socialAuthStatus];
 } 

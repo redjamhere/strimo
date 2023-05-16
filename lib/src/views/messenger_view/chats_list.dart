@@ -23,122 +23,129 @@ class ChatList extends StatelessWidget {
         listenWhen: (previous, current) => previous.openedChat != current.openedChat,
         listener: (context, state) {
           Navigator.push(context, CupertinoPageRoute(
-            builder: (context) => BlocProvider(
+            builder: (context) => BlocProvider<MessengerBloc>(
               // ================================ //
-              create: (context) => MessengerCubit(
+              create: (_) => MessengerBloc(
                 messengerRepository: context.read<MessengerRepository>(), 
-                userRepository: context.read<UserRepository>(), 
-                openedChat: state.openedChat!)..onChatOpened(),
-                child: const ChatView(),
+                openedChat: state.openedChat!)..add(ChatViewOpened())..add(MessageRequested()),
+              child: const ChatView(),
               // ================================ //
             )));
         },
         builder: (context, state) {
-          return ListView.separated(
-            addAutomaticKeepAlives: false,
-            itemCount: state.defaultChats.length,
-            separatorBuilder: (ctx, index) =>
-                SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-            itemBuilder: (ctx, index) {
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    context.read<ChatsBloc>().add(ChatOpened(
-                    chat: state.defaultChats[index]));
-                  },
-                  child: Row(
+          return ListView(
+            shrinkWrap: true,
+            children: state.defaultChats.map((chat) => _ChatTileView(
+              key: ValueKey('chat_${chat.id}'),
+              chat: chat,
+            )).toList(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+class _ChatTileView extends StatelessWidget {
+  const _ChatTileView({super.key, required this.chat});
+  final Chat chat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      key: key,
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          context.read<ChatsBloc>().add(ChatOpened(
+          chat: chat));
+        },
+        child: Row(
+          children: [
+            JoyveeProfileAvatar(
+                avatar: chat.members[0].avatar!,
+                isOnline: chat.members[0].isOnline!),
+            SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      JoyveeProfileAvatar(
-                          avatar: state.defaultChats[index].members[0].avatar!,
-                          isOnline: state.defaultChats[index].members[0].isOnline!),
-                      SizedBox(width: SizeConfig.blockSizeHorizontal! * 3),
+                      Text(
+                        JoyveeFunctions.ellipsisString(
+                            '${chat.members[0].firstname!} ${chat.members[0].lastname!}'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(
+                                fontSize: 14 *
+                                    MediaQuery.textScaleFactorOf(
+                                        context),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .scrim),
+                      ),
+                      RichText(
+                        text: TextSpan(children: [
+                          const WidgetSpan(
+                              child: Icon(
+                            Icons.abc,
+                            color: JoyveeColors.jvLightBlueLink,
+                          )),
+                          const TextSpan(text: " "),
+                          TextSpan(
+                              text: JoyveeFunctions
+                                  .parseDateTimeToString(chat.lastMessage.date!),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontSize: 14))
+                        ]),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
                       Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  JoyveeFunctions.ellipsisString(
-                                      '${state.defaultChats[index].members[0].firstname!} ${state.defaultChats[index].members[0].lastname!}'),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                          fontSize: 14 *
-                                              MediaQuery.textScaleFactorOf(
-                                                  context),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .scrim),
-                                ),
-                                RichText(
-                                  text: TextSpan(children: [
-                                    const WidgetSpan(
-                                        child: Icon(
-                                      Icons.abc,
-                                      color: JoyveeColors.jvLightBlueLink,
-                                    )),
-                                    const TextSpan(text: " "),
-                                    TextSpan(
-                                        text: JoyveeFunctions
-                                            .parseDateTimeToString(state.defaultChats[index]
-                                                .lastMessage
-                                                .date!),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(fontSize: 14))
-                                  ]),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    JoyveeFunctions.ellipsisString(
-                                        state.defaultChats[index].lastMessage.content),
-                                    maxLines: 2,
-                                    textScaleFactor:
-                                        MediaQuery.textScaleFactorOf(context),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(fontSize: 14),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(2),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(360),
-                                      color: JoyveeColors.jvLightBlueLink),
-                                  child: Text(
-                                    '123',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineLarge!
-                                        .copyWith(
-                                            fontSize: 14, color: Colors.white),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
+                        child: Text(
+                          JoyveeFunctions.ellipsisString(
+                              chat.lastMessage.content),
+                          maxLines: 2,
+                          textScaleFactor:
+                              MediaQuery.textScaleFactorOf(context),
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 14),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(360),
+                            color: JoyveeColors.jvLightBlueLink),
+                        child: Text(
+                          '123',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                  fontSize: 14, color: Colors.white),
                         ),
                       )
                     ],
                   ),
-                ),
-              );
-            },
-          );
-        },
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

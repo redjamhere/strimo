@@ -1,5 +1,6 @@
 // описание логики логина
 import 'package:equatable/equatable.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -11,11 +12,11 @@ import '../../models/models.dart';
 part 'login_state.dart';
 part 'login_event.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends Bloc<LoginEvent, LoginState> with UserStorageMixin{
   LoginBloc({
     required AuthorizationRepository authorizationRepository,
     required UserRepository userRepository,
-    required MessengerRepository messengerRepository
+    required MessengerRepository messengerRepository,
   }) : _authorizationRepository = authorizationRepository, 
        _userRepository = userRepository,
        _messengerRepository = messengerRepository,
@@ -67,7 +68,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           deviceName: deviceInfo.name,
           sysLang: _userRepository.getUserLocalLanguage()
         );
-        await _userRepository.saveUserToLocalStorage(user);
+        await addUserToStorage(user);
         emit(state.copyWith(status: FormzStatus.submissionSuccess));
       } catch (e) {
         emit(state.copyWith(status: FormzStatus.submissionFailure, errorMessage: e.toString()));
@@ -90,7 +91,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         deviceId: deviceInfo.id,
         deviceName: deviceInfo.name,
       );
-      await _userRepository.saveUserToLocalStorage(user);
+      await addUserToStorage(user);
       await _messengerRepository.init();
       emit(state.copyWith(status: FormzStatus.submissionSuccess));
     } catch (e) {

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:joyvee/src/bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:joyvee/src/bloc/bloc.dart';
-import 'package:joyvee/src/repository/map_repository.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import './utils/utils.dart';
@@ -18,7 +16,7 @@ class JoyveeApp extends StatelessWidget {
       required this.streamChatRepository,
       required this.iosStreamRepository,
       required this.messengerRepository,
-      required this.searchRepository
+      required this.searchRepository,
   });
 
   final AuthorizationRepository authorizationRepository;
@@ -43,12 +41,11 @@ class JoyveeApp extends StatelessWidget {
           RepositoryProvider.value(value: streamChatRepository),
           RepositoryProvider.value(value: iosStreamRepository),
           RepositoryProvider.value(value: messengerRepository),
-          RepositoryProvider.value(value: searchRepository)
+          RepositoryProvider.value(value: searchRepository),
         ],
         child: BlocProvider(
           create: (ctx) => AuthorizationBloc(
-              authorizationRepository: authorizationRepository,
-              userRepository: userRepository),
+              authorizationRepository: authorizationRepository),
           child: const JoyveeAppView(),
         ));
   }
@@ -86,9 +83,8 @@ class _JoyveeAppViewState extends State<JoyveeAppView> {
                             providers: [
                               BlocProvider(
                                 create: (_) => ProfileBloc(
-                                  userRepository: context.read<UserRepository>(),
                                   profileRepository: context.read<ProfileRepository>()
-                                )..add(ProfileRequestedEvent()),
+                                )..add(const ProfileRequestedEvent()),
                               ),
                               BlocProvider(
                                 lazy: false,
@@ -99,9 +95,9 @@ class _JoyveeAppViewState extends State<JoyveeAppView> {
                               BlocProvider(
                                 lazy: false,
                                 create: (_) => ChatsBloc(
-                                  userRepository: context.read<UserRepository>(), 
                                   messengerRepository: context.read<MessengerRepository>())
-                                    ..add(ChatsRequested()),
+                                    ..add(ChatsRequested())
+                                    ..add(ChatLastMessageUpdated()),
                               ),
                             ],
                             child: const Wrapper(),

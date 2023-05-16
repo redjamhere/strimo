@@ -17,7 +17,7 @@ class _MessengerViewState extends State<MessengerView> with SingleTickerProvider
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
     super.initState();
   }
 
@@ -26,7 +26,6 @@ class _MessengerViewState extends State<MessengerView> with SingleTickerProvider
     super.dispose();
     _tabController.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -100,18 +99,14 @@ class _MessengerViewState extends State<MessengerView> with SingleTickerProvider
                   Tab(
                     text: 'Messages',
                   ),
-                  Tab(
-                    text: 'Stream chats',
-                  ),
                 ],
               ),
             ),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
+                children: const [
                   ChatList(),
-                  StreamChatList(),
                 ],
               ),
             )

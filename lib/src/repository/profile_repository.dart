@@ -7,25 +7,12 @@ import '../services/services.dart';
 //models
 import '../models/models.dart';
 
-class ProfileRepository with UserMixin implements Repository {
+class ProfileRepository with UserStorageMixin {
   JProfile _profile = JProfile.empty;
 
   JProfile get profile => _profile;
 
   final ProfileService _profileApi = ProfileService();
-
-  ProfileRepository() {
-    init();
-  }
-
-  @override
-  void init() async {
-    var token = await getToken();
-    if (token != null) {
-      var id = await getId();
-      await getProfile(token: token, id: id!);
-    }
-  }
 
   // Отправка инфорации о профиле при регистрации
   Future sendProfileData(RegistrationProfile p, JUser user) async {

@@ -10,8 +10,8 @@ class MessengerService {
 
   Socket get channel => _channel;
 
-  final StreamSocket _socket = StreamSocket();
-  StreamSocket get socket => _socket;
+  final MessageStream _socket = MessageStream();
+  MessageStream get socket => _socket;
 
   MessengerService.init({required String token}) :
     _channel = io(MessengerAPI.messengerLiveURL,
@@ -27,7 +27,7 @@ class MessengerService {
 
       _channel.on('messenger_typing_message', (data) => print(data));
     }
-  
+
   void joinToChat({required int chatId, required receiverId}) {
     _channel.emit('join_room', json.encode({
       "receiver_id": receiverId
@@ -35,7 +35,7 @@ class MessengerService {
   }
 
   void sendMessage({required Map<String, dynamic> msg}) {
-    _channel.emit('send_message', json.encode(msg));
+    _channel.emit('send_message', msg);
   }
 
   void typingMessenger() {
@@ -80,8 +80,9 @@ class MessengerService {
 }
 
 
-class StreamSocket{
-  final _socketResponse= StreamController<Message>();
+class MessageStream{
+  final _socketResponse = StreamController<Message>.broadcast();
+  StreamController<Message> get socketResponse => _socketResponse;
 
   void Function(Message) get addResponse => _socketResponse.sink.add;
 

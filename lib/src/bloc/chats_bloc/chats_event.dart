@@ -15,3 +15,15 @@ class ChatOpened extends ChatsEvent {
   @override
   List<Object> get props => [];
 }
+
+class ChatMessageReceived extends ChatsEvent {
+  ChatMessageReceived(this.message);
+  final Message message;
+  @override
+  List<Object> get props => [];
+}
+
+class ChatLastMessageUpdated extends ChatsEvent {
+  @override
+  List<Object> get props => [];
+}

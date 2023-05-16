@@ -1,17 +1,31 @@
-abstract class User {
+import 'package:hive_flutter/hive_flutter.dart';
+
+abstract class User extends HiveObject{
   final int? id;
+
   final String? email;
+
   final String? token;
+
   final bool? isDeleted;
+
   final String? sysLang;// язык приложения
+
   final String? deviceName;
+
   final String? deviceId;
+
   final String? registrationId;
+
   final String? idToken;
+
   final String? socialUID;
+
   final String? currency;
+
   final String? streamKey;
-  const User({
+
+  User({
     this.id,
     this.email,
     this.isDeleted = false,

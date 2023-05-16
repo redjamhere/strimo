@@ -19,21 +19,6 @@ class UserService {
     return await FirebaseMessaging.instance.getToken();
   }
 
-  Future saveUserToLocalStorage(JUser u) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("user", json.encode(u.toJson()));
-  }
-
-  Future<JUser> getUserFromLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? u = prefs.getString("user");
-    if (u == null) {
-      return JUser.empty;
-    } else {
-      return JUser.fromJson(json.decode(u));
-    }
-  }
-
   String getUserLocalLanguage()  {
     int index = Platform.localeName.indexOf('_');
     return 'ru';
@@ -54,11 +39,6 @@ class UserService {
     }
 
     return DeviceInfo(deviceId, deviceName);
-  }
-
-  Future removeUserFromLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("user");
   }
 
   Future<Position> getCurrentPosition() async {

@@ -2,14 +2,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
 import 'package:joyvee/src/models/models.dart';
-import 'package:joyvee/src/repository/respository.dart';
 import 'package:joyvee/src/utils/utils.dart';
 import 'package:joyvee/src/widgets/widgets.dart';
 import 'package:joyvee/src/cubit/cubit.dart';
-
-import 'package:joyvee/src/bloc/bloc.dart';
 
 class ChatView extends StatelessWidget {
   const ChatView({Key? key}) : super(key: key);
@@ -17,39 +13,30 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return BlocBuilder<MessengerCubit, MessengerState>(
-      builder: (context, state) {
-        return Scaffold(
-            appBar: AppBar(
-              iconTheme: const IconThemeData(color: Colors.black, size: 20),
-              titleSpacing: 0,
-              title: const _MessengerAppbarContentView(
-                key: ObjectKey("appbar_content"),
-              ),
-            ),
-            body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black, size: 20),
+        titleSpacing: 0,
+        title: const _MessengerAppbarContentView(
+          key: ObjectKey("appbar_content"),
+        ),
+      ),
+      body: Column(
+        children: [
+          const Expanded(
+            child: _MessageListViewNew(key: ValueKey('message_list'))      
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            child: Row(
               children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                      controller:
-                          context.read<MessengerCubit>().scrollController,
-                      child: const _MessageListView(
-                        key: ObjectKey("message_list"),
-                      )),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                  child: Row(
-                    children: [
-                      Expanded(child: _TextFieldView()),
-                    ],
-                  ),
-                ),
-                const _EmojiPickerView()
+                Expanded(child: _TextFieldView()),
               ],
-            ));
-      },
+            ),
+          ),
+          const _EmojiPickerView()
+        ],
+      ),
     );
   }
 }
@@ -59,7 +46,7 @@ class _MessengerAppbarContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessengerCubit, MessengerState>(
+    return BlocBuilder<MessengerBloc, MessengerState>(
       buildWhen: (previous, current) =>
           previous.openedChat != current.openedChat,
       builder: (context, state) {
@@ -94,51 +81,31 @@ class _MessengerAppbarContentView extends StatelessWidget {
   }
 }
 
-class _MessageListView extends StatelessWidget {
-  const _MessageListView({super.key});
+class _MessageListViewNew extends StatelessWidget {
+  const _MessageListViewNew({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: BlocBuilder<MessengerCubit, MessengerState>(
-          buildWhen: (previous, current) =>
-              previous.openedChat.messages != current.openedChat.messages,
-          builder: (context, state) {
-            if (state.chatLoadingStatus.isSubmissionSuccess) {
-              return Column(children: [
-                for (int index = 0;
-                    index < state.openedChat.messages.length;
-                    index++)
-                  Column(children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: SizeConfig.blockSizeVertical!),
-                      child: Text(
-                        JoyveeFunctions.formatDateToMessengerSeparator(
-                            state.openedChat.messages.keys.toList()[index]),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontSize: 12 * MediaQuery.textScaleFactorOf(context)),
-                      ),
-                    ),
-                    for (Message m in state.openedChat.messages[
-                        state.openedChat.messages.keys.toList()[index]]!)
-                      _MessageView(message: m)
-                  ]),
-              ]);
-            } else if (state.chatLoadingStatus.isSubmissionInProgress) {
-              return const FullScreenProgressIndicator();
-            } else {
-              return const Placeholder();
-            }
-          }),
+    return BlocBuilder<MessengerBloc, MessengerState>(
+      buildWhen: (previous, current) =>
+          previous.messages.length != current.messages.length ||
+          previous.chatLoadingStatus != current.chatLoadingStatus,
+      builder: (context, state) {
+        return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          reverse: true,
+          itemCount: state.messages.length,
+          itemBuilder: (context, index) => _MessageView(
+              key: ValueKey('message_$index'), message: state.messages[index]),
+        );
+      },
     );
   }
 }
 
 class _MessageView extends StatelessWidget {
-  _MessageView({required this.message});
+  _MessageView({required this.message, super.key});
   final Message message;
 
   final LinearGradient senderGradient = LinearGradient(
@@ -152,9 +119,9 @@ class _MessageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int userId = context.read<UserRepository>().user.id!;
+    var userId = context.read<MessengerBloc>().state.userId;
     return Align(
-      key: ValueKey(message.id),
+      key: key,
       alignment: userId == message.senderId
           ? Alignment.centerRight
           : Alignment.centerLeft,
@@ -196,7 +163,7 @@ class _TextFieldView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessengerCubit, MessengerState>(
+    return BlocBuilder<MessengerBloc, MessengerState>(
         buildWhen: (previous, current) =>
             current.canSend != previous.canSend ||
             current.emojiShowing != previous.emojiShowing,
@@ -206,21 +173,20 @@ class _TextFieldView extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   fontSize: 17 * MediaQuery.textScaleFactorOf(context),
                   fontWeight: FontWeight.w400),
-              controller: context.read<MessengerCubit>().textEditingController,
+              controller: context.read<MessengerBloc>().textEditingController,
               hintText: 'Aa',
               borderRadius: 30,
               autofocus: true,
               focusNode: focusNode,
               onTap: null,
               onChanged: (val) =>
-                  context.read<MessengerCubit>().onMessengerTextFieldChanged(),
+                  context.read<MessengerBloc>().add(MessengerTextFieldChanged()),
               prefixIcon: (state.emojiShowing)
                   ? IconButton(
                       onPressed: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         context
-                            .read<MessengerCubit>()
-                            .onMessengerEmojiPickerShowed();
+                            .read<MessengerBloc>().add(MessengerEmojiPickerShowed());
                       },
                       icon: const Icon(Icons.emoji_emotions),
                     )
@@ -228,8 +194,7 @@ class _TextFieldView extends StatelessWidget {
                       onPressed: () {
                         FocusScope.of(context).requestFocus(focusNode);
                         context
-                            .read<MessengerCubit>()
-                            .onMessengerEmojiPickerShowed();
+                            .read<MessengerBloc>().add(MessengerEmojiPickerShowed());
                       },
                       icon: const Icon(Icons.keyboard),
                     ),
@@ -239,8 +204,8 @@ class _TextFieldView extends StatelessWidget {
                   child: state.canSend
                       ? IconButton(
                           onPressed: () => context
-                              .read<MessengerCubit>()
-                              .onMessageSended(MessageType.message),
+                              .read<MessengerBloc>().add(
+                                const MessageSended(MessageType.message)),
                           icon: const Icon(Icons.send))
                       : IconButton(
                           onPressed: () => null,
@@ -254,7 +219,7 @@ class _EmojiPickerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessengerCubit, MessengerState>(
+    return BlocBuilder<MessengerBloc, MessengerState>(
       buildWhen: (previous, current) =>
           previous.emojiShowing != current.emojiShowing,
       builder: (context, state) => Offstage(
@@ -263,7 +228,7 @@ class _EmojiPickerView extends StatelessWidget {
           height: SizeConfig.screenHeight! * 0.5,
           child: JoyveeEmojiPicker(
             key: const Key("emojiPicker"),
-            controller: context.read<MessengerCubit>().textEditingController,
+            controller: context.read<MessengerBloc>().textEditingController,
           ),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:joyvee/src/interfaces/interfaces.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
 
 //repositories
@@ -14,20 +15,17 @@ import 'package:joyvee/src/repository/respository.dart';
 part 'profile_event.dart';
 part 'profile_state.dart';
 
-class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+class ProfileBloc extends Bloc<ProfileEvent, ProfileState> with UserStorageMixin{
   ProfileBloc({
-    required UserRepository userRepository,
     required ProfileRepository profileRepository
   }) 
-  : _userRepository = userRepository,
-    _profileRepository = profileRepository, 
+  : _profileRepository = profileRepository, 
     super (const ProfileState()) {
       on<ProfileRequestedEvent>(_onProfileRequestedEvent);
       on<ProfileAvatarChanged>(_onProfileAvatarChanged);
       on<ProfileDataChanged>(_onProfileDataChanged);
     }
 
-  final UserRepository _userRepository;
   final ProfileRepository _profileRepository;
 
   void _onProfileRequestedEvent(
@@ -36,9 +34,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(profileLoadingStatus: FormzStatus.submissionInProgress));
     try {
+      var user = getUserFromStorage();
       JProfile p = await _profileRepository
-        .getProfile(id: event.userId?? _userRepository.user.id!, token: _userRepository.user.token!);
-      List<UserLastStream> ls = await _profileRepository.getUserLastStreams(_userRepository.user);
+        .getProfile(id: event.userId?? user!.id!, token: user!.token!);
+      List<UserLastStream> ls = await _profileRepository.getUserLastStreams(user);
       emit(state.copyWith(
         profile: p, 
         lastStreams: ls,
@@ -57,8 +56,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(state.copyWith(profileUpdatingStatus: FormzStatus.submissionInProgress));
     try {
+      var user = getUserFromStorage();
       JProfile p = state.profile.copyWith(sourceAvatar: event.avatar);
-      await _profileRepository.updateProfileData(p, _userRepository.user);
+      await _profileRepository.updateProfileData(p, user!);
       emit(state.copyWith(profile: p, profileUpdatingStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(profileUpdatingStatus: FormzStatus.submissionFailure, errorMessage: e.toString()));
@@ -69,9 +69,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileDataChanged event,
     Emitter<ProfileState> emit,
   ) async {
+    var user = getUserFromStorage();
     emit(state.copyWith(profileUpdatingStatus: FormzStatus.submissionInProgress));
     try {
-      await _profileRepository.updateProfileData(event.profile, _userRepository.user);
+      await _profileRepository.updateProfileData(event.profile, user!);
       emit(state.copyWith(profile: event.profile, profileUpdatingStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(profileUpdatingStatus: FormzStatus.submissionFailure, errorMessage: e.toString()));

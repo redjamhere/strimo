@@ -1,13 +1,11 @@
 // описание логики карты с трансляциями
 import 'dart:async';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
-import 'package:joyvee/src/repository/map_repository.dart';
-import 'package:collection/collection.dart';
 
 //repositories
 import 'package:joyvee/src/repository/respository.dart';
@@ -15,7 +13,7 @@ import 'package:joyvee/src/repository/respository.dart';
 part 'livemap_state.dart';
 part 'livemap_event.dart';
 
-class LivemapBloc extends Bloc<LivemapEvent, LivemapState> {
+class LivemapBloc extends Bloc<LivemapEvent, LivemapState> with UserStorageMixin{
   LivemapBloc({
     required UserRepository userRepository,
     required MapRepository mapRepository
@@ -59,7 +57,8 @@ class LivemapBloc extends Bloc<LivemapEvent, LivemapState> {
   ) async {
       emit(state.copyWith(mapContentStatus: FormzStatus.submissionInProgress));
      try {
-      MapContent result = await _mapRepository.getMarkersForMap(_userRepository.user, state.contentFilter);
+      var user = getUserFromStorage();
+      MapContent result = await _mapRepository.getMarkersForMap(user!, state.contentFilter);
       return emit(state.copyWith(mapContent: result, mapContentStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       return emit(state.copyWith(errorMessage: e.toString(), mapContentStatus: FormzStatus.submissionFailure));
@@ -73,7 +72,8 @@ class LivemapBloc extends Bloc<LivemapEvent, LivemapState> {
     emit(state.copyWith(streamInfoLoadingStatus: FormzStatus.submissionInProgress));
     await Future.delayed(const Duration(seconds: 2));
     try {
-      JStream streamInfo = await _mapRepository.getStreamInfo(_userRepository.user, event.id);
+      var user = getUserFromStorage();
+      JStream streamInfo = await _mapRepository.getStreamInfo(user!, event.id);
       emit(state.copyWith(streamInfo: streamInfo, streamInfoLoadingStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString(), streamInfoLoadingStatus: FormzStatus.submissionFailure));

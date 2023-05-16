@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
 import 'package:joyvee/src/repository/respository.dart';
 import 'package:joyvee/src/utils/urls.dart';
@@ -12,12 +13,8 @@ import 'package:strimocamera/strimocamera.dart';
 part 'camera_state.dart';
 part 'camera_event.dart';
 
-class CameraBloc extends Bloc<CameraEvent, CameraState> {
-  CameraBloc(JStream streamInfo, {
-    required UserRepository userRepository
-  }) :
-    _userRepository = userRepository, 
-    super(CameraState(streamInfo: streamInfo)) {
+class CameraBloc extends Bloc<CameraEvent, CameraState> with UserStorageMixin {
+  CameraBloc(JStream streamInfo) : super(CameraState(streamInfo: streamInfo)) {
       on<CameraFlashLightChanged>(_onCameraFlashLightStatusChanged);
       on<CameraFlashLightPressed>(_onCameraFlashLightPressed);
       on<CameraSwitchPressed>(_onCameraSwitchPressed);
@@ -39,7 +36,6 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
   late StreamSubscription<bool> _flashLightSubscription;
   late StreamSubscription<StreamStatus> _connectionStatusSubscription;
 
-  final UserRepository _userRepository;
 
   @override
   Future<void> close() {
@@ -83,7 +79,8 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
     CameraStreamStarted event,
     Emitter<CameraState> emit
   ) async {
-    await controller.startStream('${LiveAPI.rtmpURL}${_userRepository.user.streamKey}');
+    var user = getUserFromStorage();
+    await controller.startStream('${LiveAPI.rtmpURL}${user!.streamKey}');
   }
 
   void _onCameraStreamStopped(
@@ -94,7 +91,7 @@ class CameraBloc extends Bloc<CameraEvent, CameraState> {
       controller.stopStream();
       emit(state.copyWith(isStreamStopped: true));
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 

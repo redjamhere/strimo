@@ -2,12 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:google_place/google_place.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/repository/map_repository.dart';
 import 'package:joyvee/src/repository/respository.dart';
 
 part 'search_place_state.dart';
 
-class SearchPlaceCubit extends Cubit<SearchPlaceState> {
+class SearchPlaceCubit extends Cubit<SearchPlaceState> with UserStorageMixin{
   SearchPlaceCubit({
     required UserRepository userRepository,
     required MapRepository mapRepository
@@ -20,7 +21,8 @@ class SearchPlaceCubit extends Cubit<SearchPlaceState> {
   
 
   void setUserSystemLanguage() {
-    emit(state.copyWith(sysLang: _userRepository.user.sysLang));
+    var user = getUserFromStorage();
+    emit(state.copyWith(sysLang: user!.sysLang));
   }
 
   void onSearchChanged(String s) async {

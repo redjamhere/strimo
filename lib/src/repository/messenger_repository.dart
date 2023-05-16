@@ -5,21 +5,21 @@ import 'package:joyvee/src/services/services.dart';
 import 'package:joyvee/src/mixin/mixins.dart';
 import 'package:joyvee/src/models/models.dart';
 
-class MessengerRepository with UserMixin implements Repository{
+class MessengerRepository with UserStorageMixin implements Repository{
   late final MessengerService _api;
   MessengerRepository() {
     init();
   }
 
-  late final StreamSocket _socket;
-  StreamSocket get socket => _socket;
+  late final MessageStream _messageStream;
+  MessageStream get messageStream => _messageStream;
 
   @override
   Future<void> init() async {
-    var token = await getToken();
+    var token = getUserFromStorage()?.token;
     if (token != null) {
      _api = MessengerService.init(token: token);
-     _socket = _api.socket;
+     _messageStream = _api.socket;
     } 
   }
   
@@ -42,10 +42,10 @@ class MessengerRepository with UserMixin implements Repository{
       chat.members.where((element) => element.userId != user.id).toList().first);
     return openedChat;
   }
-
+  
   Future fetchNextMessages() async {}
 
   void dispose() {
-    _socket.dispose();
+    _messageStream.dispose();
   }
 }

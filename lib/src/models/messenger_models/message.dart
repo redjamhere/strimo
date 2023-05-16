@@ -1,29 +1,22 @@
-import 'package:equatable/equatable.dart';
 import 'package:joyvee/src/utils/utils.dart';
 import 'package:joyvee/src/interfaces/interfaces.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 
 
-class Message extends MessageInterface {
+class Message extends MessageInterface 
+  implements Comparable{
 
   const Message({
-    required int id,
-    required int chatId,
-    required int senderId,
-    MessageType type = MessageType.message,
-    required DateTime date,
-    required dynamic content
-  }): super(
-    id: id,
-    chatId: chatId,
-    senderId: senderId,
-    type: type,
-    date: date,
-    content: content
-  );
+    required super.id,
+    required super.chatId,
+    required super.senderId,
+    super.type = MessageType.message,
+    required super.date,
+    required super.content
+  });
 
   factory Message.fromJson(Map<String, dynamic> data) => Message(
-    id: data['message_id'],
+    id: data['message_id']?? data['id'],
     chatId: data['chat_id'],
     senderId: data["sender"],
     type: JoyveeFunctions.intToMessageType(data['type_id']),
@@ -39,29 +32,31 @@ class Message extends MessageInterface {
   // };
 
   @override
-  List<Object> get props => [id!, chatId!];
+  String toString() => '$id: $date';
 
   @override
-  String toString() => '$id: $date';
+  int compareTo(other) {
+    return date!.compareTo(other.date);
+  }
+
 }
 
-class SendedMessage extends MessageInterface {
+class SendedMessage extends MessageInterface 
+  implements Comparable{
   const SendedMessage({
-    MessageType type = MessageType.message,
-    required dynamic content,
-    required int receiverId
-  }) : super(
-    type: type,
-    content: content,
-    receiverId: receiverId
-  );
+    super.type = MessageType.message,
+    required super.content,
+    required super.receiverId
+  });
 
   Map<String, dynamic> toJson() => {
-    "type": EnumToString.convertToString(type),
+    "type": EnumToString.convertToString(type).toUpperCase(),
     "content": content,
     "receiver_id": receiverId
   };
 
   @override
-  List<Object> get props => [receiverId!];
+  int compareTo(other) {
+    return date!.compareTo(other.date);
+  }
 }

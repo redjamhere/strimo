@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:intl/intl.dart';
+import 'package:joyvee/src/mixin/mixins.dart';
 
 //utils
 import '../../utils/utils.dart';
@@ -18,7 +19,7 @@ import '../../repository/respository.dart';
 part 'registration_event.dart';
 part 'registration_state.dart';
 
-class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
+class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> with UserStorageMixin{
   RegistrationBloc({
     required ProfileRepository profileRepository,
     required AuthorizationRepository authorizationRepository,
@@ -27,7 +28,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     : _profileRepository = profileRepository,
       _authorizationRepository = authorizationRepository,
       _userRepository = userRepository,
-      super(const RegistrationState()) {
+      super(RegistrationState()) {
         on<RegFirstnameChanged>(_onRegFirstnameChanged);
         on<RegLastnameChanged>(_onRegLastnameChanged);
         on<RegMailChanged>(_onRegMailChanged);
@@ -167,10 +168,10 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     if (state.codeStatus.isValidated) {
       emit(state.copyWith(codeStatus: FormzStatus.submissionInProgress));
       try {
-        JUser userInfo = await _authorizationRepository.sendVerificationCode(state.user, state.otpCode.value);
-        emit(state.copyWith(user: state.user.copyWith(token: userInfo.token, streamKey: userInfo.streamKey)));
-        await _profileRepository.sendProfileData(state.profile, state.user);
-        await _userRepository.saveUserToLocalStorage(state.user);
+        JUser userInfo = await _authorizationRepository.sendVerificationCode(state.user!, state.otpCode.value);
+        emit(state.copyWith(user: state.user!.copyWith(token: userInfo.token, streamKey: userInfo.streamKey)));
+        await _profileRepository.sendProfileData(state.profile, state.user!);
+        await addUserToStorage(state.user!);
         emit(state.copyWith(codeStatus: FormzStatus.submissionSuccess));
       } catch (e) {
         emit(state.copyWith(codeStatus: FormzStatus.submissionFailure, errorMessage: e.toString()));
@@ -213,7 +214,7 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
       );
       JUser userInfo = await _authorizationRepository.sendProfilWithSocialAuth(state.profile, user);
       user = user.copyWith(id: userInfo.id, token: userInfo.token);
-      await _userRepository.saveUserToLocalStorage(user);
+      await addUserToStorage(user);
       emit(state.copyWith(socialAuthStatus: FormzStatus.submissionSuccess));
     } catch (e) {
       emit(state.copyWith(socialAuthStatus: FormzStatus.submissionFailure, errorMessage: e.toString()));

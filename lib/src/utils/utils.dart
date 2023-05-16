@@ -11,3 +11,4 @@ export 'provider_error_listener.dart';
 export 'progress_indicator.dart';
 export 'firebase_options.dart';
 export 'app_initialize.dart';
+export 'app_storage.dart';

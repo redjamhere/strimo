@@ -9,6 +9,8 @@ import './src/app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await AppStorage().initStorage();
+
   AppInitialize.init();
 
   runApp(Phoenix(child: JoyveeApp(

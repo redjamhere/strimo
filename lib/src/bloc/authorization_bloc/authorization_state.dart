@@ -1,24 +1,24 @@
 part of 'authorization_bloc.dart';
 
 class AuthorizationState extends Equatable {
-  const AuthorizationState._({
+  AuthorizationState._({
     this.status = AuthorizationStatus.unknow,
-    this.user = JUser.empty,
-    this.errorMessage
-  });
+    this.errorMessage,
+    JUser? user
+  }) : user = JUser.empty;
 
   final AuthorizationStatus status;
   final JUser user;
   final String? errorMessage;
 
-  const AuthorizationState.unknow() : this._();
+  AuthorizationState.unknow() : this._();
 
-  const AuthorizationState.authenticated(JUser user)
+  AuthorizationState.authenticated(JUser user)
     : this._(status: AuthorizationStatus.authenticated, user: user);
 
-  const AuthorizationState.unauthenticated(): this._(status: AuthorizationStatus.unauthenticated);
+  AuthorizationState.unauthenticated(): this._(status: AuthorizationStatus.unauthenticated);
 
-  const AuthorizationState.error(String error) : this._(errorMessage: error, status: AuthorizationStatus.error);
+  AuthorizationState.error(String error) : this._(errorMessage: error, status: AuthorizationStatus.error);
 
   @override
   List<Object> get props => [status, user];
